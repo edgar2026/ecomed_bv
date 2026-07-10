@@ -1,0 +1,6 @@
+{
+  "name": "Ecossistema de Medicina",
+  "description": "Sistema integrado de Medicina com os módulos de Gestão de Preceptoria e o SimulaMed para acompanhamento acadêmico do ENAMED.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

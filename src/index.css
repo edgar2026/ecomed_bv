@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", sans-serif;
+
+  /* Colors mapped to the Clean Minimalism palette */
+  --color-primary: #0f172a; /* bg-slate-900 / slate-900 */
+  --color-primary-container: #1e293b; /* slate-800 */
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #cbd5e1; /* slate-300 */
+  
+  --color-secondary: #2563eb; /* blue-600 */
+  --color-secondary-container: #eff6ff; /* blue-50 */
+  --color-on-secondary-container: #1e40af; /* blue-800 */
+  
+  --color-surface: #ffffff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f8fafc; /* slate-50 */
+  --color-surface-container-high: #f1f5f9; /* slate-100 */
+  --color-surface-container-highest: #e2e8f0; /* slate-200 */
+  
+  --color-on-surface: #1e293b; /* slate-800 */
+  --color-on-surface-variant: #64748b; /* slate-500 */
+  
+  --color-outline: #94a3b8; /* slate-400 */
+  --color-outline-variant: #e2e8f0; /* slate-200 */
+  
+  --color-error: #f43f5e; /* rose-500 */
+  --color-error-container: #fff1f2; /* rose-50 */
+  
+  /* Additional variables from existing theme mapping to keep all existing modules working perfectly */
+  --color-primary-fixed: #f1f5f9; /* slate-100 */
+  --color-primary-fixed-dim: #94a3b8; /* slate-400 */
+  --color-secondary-fixed: #dbeafe; /* blue-100 */
+  --color-secondary-fixed-dim: #60a5fa; /* blue-400 */
+  --color-on-secondary-fixed-variant: #1e293b; /* slate-800 */
+  --color-surface-tint: #3b82f6; /* blue-500 */
+
+  /* Spacing */
+  --spacing-sidebar-width: 256px; /* 64 * 4px = 256px to perfectly match w-64 */
+  
+  /* Borders & Shadows */
+  --shadow-level-1: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-level-2: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-level-3: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+  --shadow-level-4: 0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05);
+}
+
+/* Custom scrollbars and styling for clean minimalism */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Fine-tune layouts to ensure pristine alignment, borders and minimalist aesthetics */
+input, select, textarea {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+/* Global body backgrounds and transitions */
+body {
+  background-color: #f8fafc; /* slate-50 */
+}
