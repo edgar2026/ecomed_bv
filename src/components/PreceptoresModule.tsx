@@ -166,7 +166,7 @@ export function PreceptoresModule({
       escalas: [],
       pagamentos: [],
       solicitacoes: [],
-      historico: [{ data: '10/07/2026 12:00', acao: 'Cadastro de preceptor efetuado', usuario: 'edgareda2015' }]
+      historico: [{ data: '10/07/2026 12:00', acao: 'Cadastro de preceptor efetuado', usuario: 'Hesdras Viana' }]
     };
 
     setPreceptors([...preceptors, newPreceptor]);
@@ -242,7 +242,7 @@ export function PreceptoresModule({
           status: nextStatus as any
         };
         const updatedHistory = [
-          { data: '10/07/2026 12:15', acao: `Documento '${docs[docIndex].nome}' alterado para ${nextStatus}`, usuario: 'edgareda2015' },
+          { data: '10/07/2026 12:15', acao: `Documento '${docs[docIndex].nome}' alterado para ${nextStatus}`, usuario: 'Hesdras Viana' },
           ...p.historico
         ];
         return { ...p, documentos: docs, historico: updatedHistory };

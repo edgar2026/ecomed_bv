@@ -6,7 +6,8 @@ import {
   CalendarDays,
   ShieldAlert,
   Users,
-  Award
+  Award,
+  Handshake
 } from 'lucide-react';
 import { ModuleId } from '../types';
 
@@ -47,6 +48,14 @@ export function HomeModule({
       status: 'Ativo / Completo',
       statusType: 'success',
       icon: <Sparkles className="w-6 h-6 text-amber-500" />
+    },
+    {
+      id: 'convenios' as ModuleId,
+      title: 'Convênios',
+      desc: 'Painel institucional de acompanhamento dos convênios de estágio da unidade. Controle de vigências, contrapartidas financeiras, distribuição por curso, Gantt de vencimentos e alertas de renovação.',
+      status: 'Ativo / Completo',
+      statusType: 'success',
+      icon: <Handshake className="w-6 h-6 text-rose-600" />
     }
   ];
 
@@ -67,7 +76,7 @@ export function HomeModule({
             Ecossistema Integrado de Medicina
           </h1>
           <p className="text-xs text-blue-100 leading-relaxed max-w-2xl">
-            Bem-vindo ao centro unificado de operações da UNINASSAU. Esta plataforma consolidada gerencia de forma ágil a Gestão de Preceptoria e a preparação de alunos pelo SimulaMed.
+            Bem-vindo ao centro unificado de operações da UNINASSAU. Esta plataforma consolidada gerencia de forma ágil a Gestão de Preceptoria, preparação de alunos pelo SimulaMed e acompanhamento institucional de Convênios.
           </p>
           <div className="pt-2 flex flex-wrap gap-3">
             <button
@@ -83,6 +92,13 @@ export function HomeModule({
             >
               Acessar SimulaMed ENAMED
               <ArrowRight className="w-4 h-4 text-blue-200" />
+            </button>
+            <button
+              onClick={() => handleModuleClick('convenios')}
+              className="bg-rose-600/30 hover:bg-rose-600/50 text-white font-bold text-xs px-5 py-2.5 rounded-lg shadow-sm border border-white/20 transition-all flex items-center gap-2"
+            >
+              Acessar Convênios
+              <ArrowRight className="w-4 h-4 text-rose-200" />
             </button>
           </div>
         </div>
@@ -116,10 +132,10 @@ export function HomeModule({
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Painel Unificado de Módulos</h3>
-          <span className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-semibold">2 Módulos Completos | Operação Médica</span>
+          <span className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md font-semibold">3 Módulos Completos | Operação Médica</span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {modulesList.map((mod) => {
             return (
               <div
@@ -167,7 +183,7 @@ export function HomeModule({
         <div className="space-y-1">
           <h4 className="text-xs font-bold text-slate-900 uppercase">Arquitetura de Expansão Homologada</h4>
           <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
-            O ecossistema está focado na entrega da alta performance operacional. Atualmente, os módulos de <strong>Gestão de Preceptoria</strong> e <strong>SimulaMed</strong> operam em produção total. Os demais módulos de expansão (Internato, Docentes, Relatórios Corporativos) estão desativados temporariamente e serão integrados no roadmap futuro de expansão.
+            O ecossistema está focado na entrega da alta performance operacional. Atualmente, os módulos de <strong>Gestão de Preceptoria</strong>, <strong>SimulaMed</strong> e <strong>Convênios</strong> operam em produção total. Os demais módulos de expansão (Internato, Docentes, Relatórios Corporativos) estão desativados temporariamente e serão integrados no roadmap futuro de expansão.
           </p>
         </div>
       </div>

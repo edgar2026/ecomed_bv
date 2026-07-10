@@ -3,8 +3,7 @@ import {
   Home,
   GraduationCap,
   Sparkles,
-  Plus,
-  LogOut,
+  Handshake,
   LifeBuoy
 } from 'lucide-react';
 
@@ -22,6 +21,7 @@ interface ModuleInfo {
   subPages: { id: string; label: string }[];
 }
 
+// Full module structure preserved in code — submenus hidden from interface
 export const MODULES: ModuleInfo[] = [
   {
     id: 'home',
@@ -37,6 +37,7 @@ export const MODULES: ModuleInfo[] = [
     icon: GraduationCap,
     subPages: [
       { id: 'dashboard', label: 'Dashboard' },
+      // Hidden from UI — preserved for future activation
       { id: 'lista', label: 'Cadastro & Lista' },
       { id: 'escalas', label: 'Escalas' },
       { id: 'pagamentos', label: 'Pagamentos' },
@@ -52,6 +53,7 @@ export const MODULES: ModuleInfo[] = [
     icon: Sparkles,
     subPages: [
       { id: 'dashboard', label: 'Dashboard' },
+      // Hidden from UI — preserved for future activation
       { id: 'alunos', label: 'Alunos' },
       { id: 'simulados', label: 'Simulados' },
       { id: 'desempenho', label: 'Desempenho' },
@@ -59,6 +61,20 @@ export const MODULES: ModuleInfo[] = [
       { id: 'acompanhamentos', label: 'Acompanhamentos' },
       { id: 'plataformas', label: 'Plataformas de Estudo' },
       { id: 'relatorios', label: 'Relatórios' }
+    ]
+  },
+  {
+    id: 'convenios',
+    label: 'Convênios',
+    icon: Handshake,
+    subPages: [
+      { id: 'dashboard', label: 'Dashboard' },
+      // Hidden from UI — preserved for future activation
+      { id: 'todos', label: 'Todos os Convênios' },
+      { id: 'contrapartidas', label: 'Contrapartidas' },
+      { id: 'cursos', label: 'Cursos & Vagas' },
+      { id: 'obrigacoes', label: 'Obrigações' },
+      { id: 'harf', label: 'Destaque: HARF' }
     ]
   }
 ];
@@ -83,7 +99,7 @@ export function Sidebar({
         />
       </div>
 
-      {/* Main Modules Navigation List */}
+      {/* Main Modules Navigation List — 4 modules only, no sub-items shown */}
       <div className="flex-1 overflow-y-auto px-2 space-y-1 py-2 custom-scrollbar">
         {MODULES.map((mod) => {
           const Icon = mod.icon;
@@ -91,12 +107,11 @@ export function Sidebar({
 
           return (
             <div key={mod.id} className="space-y-0.5">
-              {/* Parent Nav Button */}
+              {/* Parent Nav Button — clicks go directly to dashboard */}
               <button
                 onClick={() => {
                   setActiveModule(mod.id);
-                  // Default to first subpage of selected module
-                  setActiveSubPage(mod.subPages[0].id);
+                  setActiveSubPage('dashboard');
                 }}
                 className={`w-full flex items-center justify-between px-3 py-2.5 rounded transition-all text-left group ${
                   isSelected

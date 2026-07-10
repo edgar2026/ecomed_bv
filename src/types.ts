@@ -1,7 +1,8 @@
 export type ModuleId =
   | 'home'
   | 'preceptores'
-  | 'simulamed';
+  | 'simulamed'
+  | 'convenios';
 
 export interface Preceptor {
   id: string;

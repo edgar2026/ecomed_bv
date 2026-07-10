@@ -7,6 +7,7 @@ import { Header } from './components/Header';
 import { HomeModule } from './components/HomeModule';
 import { PreceptoresModule } from './components/PreceptoresModule';
 import { SimulaMedModule } from './components/SimulaMedModule';
+import { ConveniosModule } from './components/ConveniosModule';
 
 // Mock datasets
 import {
@@ -152,6 +153,10 @@ export default function App() {
                 subPage={activeSubPage}
                 setSubPage={setActiveSubPage}
               />
+            )}
+
+            {activeModule === 'convenios' && (
+              <ConveniosModule />
             )}
           </div>
         </main>
