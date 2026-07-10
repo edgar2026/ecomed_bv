@@ -24,13 +24,7 @@ export function HomeModule({
   preceptorsCount,
   scalesCount
 }: HomeModuleProps) {
-  
-  const ecosystemKPIs = [
-    { label: 'Preceptores Homologados', value: preceptorsCount, change: '+12% este semestre', icon: <GraduationCap className="w-5 h-5 text-blue-600" /> },
-    { label: 'Alunos SimulaMed', value: 1840, change: '100% integrados no ENAMED', icon: <Users className="w-5 h-5 text-indigo-600" /> },
-    { label: 'Simulados Aplicados', value: 32, change: 'Alta performance acadêmica', icon: <Award className="w-5 h-5 text-emerald-600" /> },
-    { label: 'Escalas Realizadas', value: scalesCount, change: '99.2% de assiduidade', icon: <CalendarDays className="w-5 h-5 text-amber-600" /> }
-  ];
+
 
   const modulesList = [
     {
@@ -109,24 +103,6 @@ export function HomeModule({
         </div>
       </div>
 
-      {/* Ecosystem-wide Stats */}
-      <div className="space-y-3">
-        <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">KPIs de Desempenho Institucional</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {ecosystemKPIs.map((kpi, idx) => (
-            <div key={idx} className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-xs flex items-center gap-4">
-              <div className="p-3 bg-slate-50 rounded-lg shrink-0">
-                {kpi.icon}
-              </div>
-              <div>
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{kpi.label}</p>
-                <h3 className="text-lg font-extrabold text-slate-900 mt-0.5">{kpi.value}</h3>
-                <p className="text-[10px] text-slate-500 font-semibold mt-0.5">{kpi.change}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
 
       {/* Grid of Modules */}
       <div className="space-y-4">
