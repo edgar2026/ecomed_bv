@@ -75,18 +75,12 @@ export function Sidebar({
       className="bg-primary text-white w-sidebar-width fixed left-0 top-0 bottom-0 flex flex-col z-50 h-screen select-none overflow-hidden"
     >
       {/* Sidebar Header */}
-      <div className="px-6 py-5 flex items-center gap-3 border-b border-primary-container shrink-0">
-        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-white shrink-0 text-sm">
-          E
-        </div>
-        <div>
-          <h1 className="text-xs font-bold text-white tracking-tight leading-tight uppercase">
-            Ecossistema
-          </h1>
-          <p className="text-[9px] text-slate-400 font-bold tracking-widest uppercase mt-0.5">
-            de Medicina
-          </p>
-        </div>
+      <div className="px-6 py-4 flex items-center justify-center border-b border-primary-container shrink-0">
+        <img 
+          src="/uninassau_logo_white.png" 
+          alt="UNINASSAU Logo" 
+          className="h-16 w-auto object-contain"
+        />
       </div>
 
       {/* Main Modules Navigation List */}
