@@ -21,7 +21,13 @@ import {
   X,
   Phone,
   MessageCircle,
-  Award
+  Award,
+  BarChart3,
+  PieChart,
+  AlertCircle,
+  UserX,
+  Trophy,
+  Target
 } from 'lucide-react';
 
 interface SimulaMedModuleProps {
@@ -41,9 +47,10 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
   const [selectedPeriodo, setSelectedPeriodo] = useState('Todos');
   const [selectedCategoria, setSelectedCategoria] = useState('Todos');
   const [selectedOrientador, setSelectedOrientador] = useState('Todos');
+  const [selectedParticipacaoS5, setSelectedParticipacaoS5] = useState('Todos');
 
   // Sorting state
-  const [sortField, setSortField] = useState<'nome' | 'media' | 'periodo'>('nome');
+  const [sortField, setSortField] = useState<'nome' | 'media' | 'periodo' | 's5'>('nome');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   // Pagination state
@@ -52,9 +59,6 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
 
   // Selected student for detail modal
   const [selectedAluno, setSelectedAluno] = useState<AlunoSimulaMed | null>(null);
-
-  // Hovered state for tooltip locking
-  const [hoveredTabId, setHoveredTabId] = useState<string | null>(null);
 
   // Dynamic lists for filter dropdowns
   const orientadoresList = useMemo(() => {
@@ -78,12 +82,12 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
   }, [allAlunos]);
 
   // Handle sorting helper
-  const handleSort = (field: 'nome' | 'media' | 'periodo') => {
+  const handleSort = (field: 'nome' | 'media' | 'periodo' | 's5') => {
     if (sortField === field) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     } else {
       setSortField(field);
-      setSortOrder('asc');
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     }
   };
 
@@ -107,7 +111,20 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
       const matchesOrientador =
         selectedOrientador === 'Todos' || al.orientador === selectedOrientador;
 
-      return matchesSearch && matchesPeriodo && matchesCategoria && matchesOrientador;
+      // Participation filter in Simulado 5
+      const isPresenteS5 = al.s5 && al.s5 !== 'Não Fez' && al.s5.trim() !== '';
+      const matchesParticipacaoS5 =
+        selectedParticipacaoS5 === 'Todos' ||
+        (selectedParticipacaoS5 === 'Participou do Simulado 5' && isPresenteS5) ||
+        (selectedParticipacaoS5 === 'Faltou ao Simulado 5' && !isPresenteS5);
+
+      return (
+        matchesSearch &&
+        matchesPeriodo &&
+        matchesCategoria &&
+        matchesOrientador &&
+        matchesParticipacaoS5
+      );
     });
 
     // Sort
@@ -121,13 +138,28 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
         comparison = valA - valB;
       } else if (sortField === 'periodo') {
         comparison = a.periodo.localeCompare(b.periodo);
+      } else if (sortField === 's5') {
+        const valA = parseFloat(a.s5);
+        const valB = parseFloat(b.s5);
+        const numA = isNaN(valA) ? -1 : valA;
+        const numB = isNaN(valB) ? -1 : valB;
+        comparison = numA - numB;
       }
 
       return sortOrder === 'asc' ? comparison : -comparison;
     });
 
     return result;
-  }, [allAlunos, searchTerm, selectedPeriodo, selectedCategoria, selectedOrientador, sortField, sortOrder]);
+  }, [
+    allAlunos,
+    searchTerm,
+    selectedPeriodo,
+    selectedCategoria,
+    selectedOrientador,
+    selectedParticipacaoS5,
+    sortField,
+    sortOrder
+  ]);
 
   // Pagination calculation
   const paginatedAlunos = useMemo(() => {
@@ -140,7 +172,7 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
   // Reset page when filters change
   React.useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, selectedPeriodo, selectedCategoria, selectedOrientador]);
+  }, [searchTerm, selectedPeriodo, selectedCategoria, selectedOrientador, selectedParticipacaoS5]);
 
   // 4. Analytics and Statistics calculations
   const stats = useMemo(() => {
@@ -186,12 +218,13 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
     };
   }, [filteredAndSortedAlunos]);
 
-  // Calculate averages per exam dynamically for charts
+  // Calculate averages per exam dynamically for charts (S1..S5)
   const examAverages = useMemo(() => {
     let s1Sum = 0, s1Count = 0;
     let s2Sum = 0, s2Count = 0;
     let s3Sum = 0, s3Count = 0;
     let s4Sum = 0, s4Count = 0;
+    let s5Sum = 0, s5Count = 0;
 
     filteredAndSortedAlunos.forEach(a => {
       const v1 = parseFloat(a.s1);
@@ -202,15 +235,70 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
       if (!isNaN(v3)) { s3Sum += v3; s3Count++; }
       const v4 = parseFloat(a.s4);
       if (!isNaN(v4)) { s4Sum += v4; s4Count++; }
+      const v5 = parseFloat(a.s5);
+      if (!isNaN(v5)) { s5Sum += v5; s5Count++; }
     });
 
     return [
-      { label: 'S1', value: s1Count > 0 ? parseFloat((s1Sum / s1Count).toFixed(1)) : 0 },
-      { label: 'S2', value: s2Count > 0 ? parseFloat((s2Sum / s2Count).toFixed(1)) : 0 },
-      { label: 'S3', value: s3Count > 0 ? parseFloat((s3Sum / s3Count).toFixed(1)) : 0 },
-      { label: 'S4', value: s4Count > 0 ? parseFloat((s4Sum / s4Count).toFixed(1)) : 0 }
+      { label: 'S1', value: s1Count > 0 ? parseFloat((s1Sum / s1Count).toFixed(1)) : 0, count: s1Count },
+      { label: 'S2', value: s2Count > 0 ? parseFloat((s2Sum / s2Count).toFixed(1)) : 0, count: s2Count },
+      { label: 'S3', value: s3Count > 0 ? parseFloat((s3Sum / s3Count).toFixed(1)) : 0, count: s3Count },
+      { label: 'S4', value: s4Count > 0 ? parseFloat((s4Sum / s4Count).toFixed(1)) : 0, count: s4Count },
+      { label: 'S5', value: s5Count > 0 ? parseFloat((s5Sum / s5Count).toFixed(1)) : 0, count: s5Count }
     ];
   }, [filteredAndSortedAlunos]);
+
+  // Participação dos Simulados calculation (Presentes e Faltantes)
+  const participacaoSimulados = useMemo(() => {
+    const totalAlunos = allAlunos.length;
+    const exams = ['s1', 's2', 's3', 's4', 's5'] as const;
+    const labels = ['Simulado 1', 'Simulado 2', 'Simulado 3', 'Simulado 4', 'Simulado 5'];
+
+    return exams.map((ex, idx) => {
+      const presentes = allAlunos.filter(a => {
+        const val = a[ex];
+        return val && val !== 'Não Fez' && val.trim() !== '' && !isNaN(parseFloat(val));
+      }).length;
+      const faltantes = totalAlunos - presentes;
+      const pctPresente = Math.round((presentes / totalAlunos) * 100);
+
+      return {
+        label: labels[idx],
+        presentes,
+        faltantes,
+        pctPresente
+      };
+    });
+  }, [allAlunos]);
+
+  // Ranking ENAMED 05 (Top 10 S5)
+  const top10Enamed05 = useMemo(() => {
+    const alunosComS5 = allAlunos
+      .filter(a => a.s5 && a.s5 !== 'Não Fez' && !isNaN(parseFloat(a.s5)))
+      .map(a => ({
+        ...a,
+        notaS5: parseFloat(a.s5)
+      }));
+
+    alunosComS5.sort((a, b) => b.notaS5 - a.notaS5);
+    return alunosComS5.slice(0, 10);
+  }, [allAlunos]);
+
+  // Alunos em Atenção Urgente (ENAMED 05)
+  const alunosAtencaoUrgente = useMemo(() => {
+    return allAlunos.filter(a => {
+      const meta = (a.metaIesEnamed05 || '').toLowerCase();
+      const faixa = (a.faixaEnamed05 || '').toLowerCase();
+      const cat = (a.categoria || '').toLowerCase();
+      return (
+        meta.includes('crítico') ||
+        meta.includes('critico') ||
+        faixa.includes('atenção') ||
+        faixa.includes('atencao') ||
+        cat.includes('alerta máximo')
+      );
+    });
+  }, [allAlunos]);
 
   // Category distribution calculation
   const categoryDistribution = useMemo(() => {
@@ -239,8 +327,24 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
 
   // Action: Export filtered dataset to CSV
   const handleExportCSV = () => {
-    const headers = ['Nome', 'Periodo', 'Simulado 1', 'Simulado 2', 'Simulado 3', 'Simulado de Reposicao', 'Simulado 4', 'Media ENAMED', 'Classificacao', 'Telefone', 'Orientador', 'Plataforma', 'Contato Realizado', 'Feedback'];
-    
+    const headers = [
+      'Nome',
+      'Periodo',
+      'Simulado 1',
+      'Simulado 2',
+      'Simulado 3',
+      'Simulado de Reposicao',
+      'Simulado 4',
+      'Simulado 5 (ENAMED 05)',
+      'Media ENAMED',
+      'Classificacao',
+      'Telefone',
+      'Orientador',
+      'Plataforma',
+      'Contato Realizado',
+      'Feedback'
+    ];
+
     const rows = filteredAndSortedAlunos.map(a => [
       `"${a.nome}"`,
       `"${a.periodo}"`,
@@ -249,6 +353,7 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
       `"${a.s3}"`,
       `"${a.rep}"`,
       `"${a.s4}"`,
+      `"${a.s5}"`,
       a.media !== null ? a.media.toFixed(2) : '"N/A"',
       `"${a.categoria}"`,
       `"${a.telefone}"`,
@@ -282,17 +387,6 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
     return `https://wa.me/${fullNumber}?text=${encodeURIComponent(textMessage)}`;
   };
 
-  // Subpages for rendering menu
-  const subPagesList = [
-    { id: 'dashboard', label: 'Dashboard', icon: Layers },
-    { id: 'alunos', label: 'Alunos ENAMED', icon: Users },
-    { id: 'simulados', label: 'Simulados', icon: FileSpreadsheet },
-    { id: 'desempenho', label: 'Desempenho', icon: TrendingUp },
-    { id: 'orientadores', label: 'Orientadores', icon: UserCheck },
-    { id: 'acompanhamentos', label: 'Acompanhamentos', icon: Clock },
-    { id: 'plataformas', label: 'Plataformas', icon: BookMarked }
-  ];
-
   // Colors mapping for badges
   const categoryStyles: Record<string, string> = {
     'Proficiente': 'text-emerald-700 bg-emerald-50 border-emerald-200',
@@ -316,6 +410,11 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
             <p className="text-xs text-slate-500 font-semibold">Monitoramento de Desempenho e Preparação para o ENAMED</p>
           </div>
         </div>
+        <div className="flex items-center gap-2">
+          <span className="px-3 py-1 bg-blue-50 border border-blue-200 text-blue-700 rounded-full text-xs font-black flex items-center gap-1.5">
+            <Award className="w-3.5 h-3.5" /> ENAMED 05 Integrado
+          </span>
+        </div>
       </div>
 
       {/* 2. Actions and Search Section */}
@@ -325,7 +424,7 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
             <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wide flex items-center gap-2">
               <Filter className="w-4 h-4 text-blue-600" /> Filtros de Monitoramento Acadêmico
             </h3>
-            <p className="text-[11px] text-slate-400">Refine a lista de alunos por período, classificação, tutor e texto de pesquisa.</p>
+            <p className="text-[11px] text-slate-400">Refine a lista de alunos por período, classificação, tutor, participação no Simulado 5 e pesquisa.</p>
           </div>
           <div className="flex items-center gap-2 self-end">
             <button
@@ -346,9 +445,9 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
         </div>
 
         {/* Filter Inputs Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-3 text-xs">
           {/* Text Search input */}
-          <div className="relative">
+          <div className="relative md:col-span-1">
             <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
             <input
               type="text"
@@ -399,6 +498,19 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
               ))}
             </select>
           </div>
+
+          {/* Participation Filter in Simulado 5 */}
+          <div>
+            <select
+              value={selectedParticipacaoS5}
+              onChange={(e) => setSelectedParticipacaoS5(e.target.value)}
+              className="w-full bg-blue-50/50 border border-blue-200 rounded-lg px-3 py-2 text-blue-900 focus:outline-none focus:ring-1 focus:ring-blue-500 font-extrabold"
+            >
+              <option value="Todos">Participação S5: Todos</option>
+              <option value="Participou do Simulado 5">Participou do Simulado 5</option>
+              <option value="Faltou ao Simulado 5">Faltou ao Simulado 5</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -443,15 +555,155 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
         </div>
       </div>
 
-      {/* 4. Interactive Visual Analytics Section */}
+      {/* 4. BLOCO NOVO REQUERIDO: RESUMO ENAMED 05 */}
+      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 border border-blue-900/40 rounded-xl p-6 text-white shadow-md">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-blue-800/40 pb-4 mb-5">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-blue-500/20 border border-blue-400/30 rounded-xl text-blue-400">
+              <Award className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-base font-black uppercase tracking-wider text-white">RESUMO ENAMED 05</h3>
+              <p className="text-xs text-blue-200/80 font-medium">Relatório Institucional Uninassau • Análise Estatística Oficial</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="px-3 py-1 bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 rounded-full text-xs font-black">
+              Taxa de Proficiência: 39,88%
+            </span>
+          </div>
+        </div>
+
+        {/* Indicators Grid for ENAMED 05 */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-3 text-center">
+          <div className="bg-white/5 border border-white/10 rounded-xl p-3">
+            <span className="text-[9px] text-blue-200/70 font-extrabold uppercase block">Alunos Avaliados</span>
+            <strong className="text-xl font-black text-white mt-1 block">173</strong>
+          </div>
+          <div className="bg-white/5 border border-white/10 rounded-xl p-3">
+            <span className="text-[9px] text-blue-200/70 font-extrabold uppercase block">Média Institucional</span>
+            <strong className="text-xl font-black text-blue-400 mt-1 block">55,22%</strong>
+          </div>
+          <div className="bg-white/5 border border-white/10 rounded-xl p-3">
+            <span className="text-[9px] text-blue-200/70 font-extrabold uppercase block">Mediana</span>
+            <strong className="text-xl font-black text-blue-300 mt-1 block">55%</strong>
+          </div>
+          <div className="bg-white/5 border border-white/10 rounded-xl p-3">
+            <span className="text-[9px] text-blue-200/70 font-extrabold uppercase block">Maior Nota</span>
+            <strong className="text-xl font-black text-emerald-400 mt-1 block">85%</strong>
+          </div>
+          <div className="bg-white/5 border border-white/10 rounded-xl p-3">
+            <span className="text-[9px] text-blue-200/70 font-extrabold uppercase block">Menor Nota</span>
+            <strong className="text-xl font-black text-rose-400 mt-1 block">33%</strong>
+          </div>
+          <div className="bg-white/5 border border-white/10 rounded-xl p-3">
+            <span className="text-[9px] text-blue-200/70 font-extrabold uppercase block">Proficientes</span>
+            <strong className="text-xl font-black text-emerald-400 mt-1 block">69</strong>
+          </div>
+          <div className="bg-white/5 border border-white/10 rounded-xl p-3">
+            <span className="text-[9px] text-blue-200/70 font-extrabold uppercase block">Quase Proficientes</span>
+            <strong className="text-xl font-black text-amber-400 mt-1 block">59</strong>
+          </div>
+          <div className="bg-white/5 border border-white/10 rounded-xl p-3">
+            <span className="text-[9px] text-blue-200/70 font-extrabold uppercase block">Atenção Urgente</span>
+            <strong className="text-xl font-black text-rose-400 mt-1 block">45</strong>
+          </div>
+          <div className="bg-white/5 border border-white/10 rounded-xl p-3">
+            <span className="text-[9px] text-blue-200/70 font-extrabold uppercase block">Taxa Proficiência</span>
+            <strong className="text-xl font-black text-emerald-300 mt-1 block">39,88%</strong>
+          </div>
+        </div>
+      </div>
+
+      {/* 5. PARTICIPAÇÃO DOS SIMULADOS & GRÁFICO DE PROFICIÊNCIA ENAMED 05 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Painel: PARTICIPAÇÃO DOS SIMULADOS */}
+        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs space-y-4">
+          <div>
+            <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wide flex items-center gap-2">
+              <Users className="w-4 h-4 text-blue-600" /> PARTICIPAÇÃO DOS SIMULADOS
+            </h3>
+            <p className="text-[11px] text-slate-400">Detalhamento de presença e faltas registrados em cada edição do simulado.</p>
+          </div>
+
+          <div className="space-y-3 pt-2">
+            {participacaoSimulados.map((sim, i) => (
+              <div key={i} className="p-3 bg-slate-50 border border-slate-100 rounded-lg space-y-1.5 text-xs">
+                <div className="flex justify-between items-center font-extrabold text-slate-900">
+                  <span>{sim.label}</span>
+                  <span className="text-[11px] text-blue-700">{sim.pctPresente}% de Participação</span>
+                </div>
+                <div className="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden flex">
+                  <div className="bg-emerald-500 h-full" style={{ width: `${sim.pctPresente}%` }} title={`Presentes: ${sim.presentes}`} />
+                  <div className="bg-rose-400 h-full" style={{ width: `${100 - sim.pctPresente}%` }} title={`Faltantes: ${sim.faltantes}`} />
+                </div>
+                <div className="flex justify-between items-center text-[10px] font-bold">
+                  <span className="text-emerald-700 flex items-center gap-1">
+                    <CheckCircle className="w-3 h-3 text-emerald-600" /> PRESENTES: <strong>{sim.presentes}</strong>
+                  </span>
+                  <span className="text-rose-600 flex items-center gap-1">
+                    <UserX className="w-3 h-3 text-rose-500" /> FALTANTES: <strong>{sim.faltantes}</strong>
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* GRÁFICO DE PROFICIÊNCIA ENAMED 05 */}
+        <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs space-y-4 flex flex-col justify-between">
+          <div>
+            <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wide flex items-center gap-2">
+              <PieChart className="w-4 h-4 text-blue-600" /> GRÁFICO DE PROFICIÊNCIA ENAMED 05
+            </h3>
+            <p className="text-[11px] text-slate-400">Distribuição percentual das metas institucionais no Simulado 5 (173 alunos).</p>
+          </div>
+
+          <div className="space-y-4 my-auto py-2">
+            {/* Visual Bar Stack */}
+            <div className="w-full h-8 rounded-xl overflow-hidden flex shadow-2xs border border-slate-200">
+              <div className="bg-emerald-500 h-full flex items-center justify-center text-white text-[10px] font-black" style={{ width: '39.88%' }} title="Proficientes: 69 (39,88%)">
+                39.88%
+              </div>
+              <div className="bg-amber-500 h-full flex items-center justify-center text-white text-[10px] font-black" style={{ width: '34.10%' }} title="Quase Proficientes: 59 (34,10%)">
+                34.10%
+              </div>
+              <div className="bg-rose-500 h-full flex items-center justify-center text-white text-[10px] font-black" style={{ width: '26.01%' }} title="Atenção Urgente: 45 (26,01%)">
+                26.01%
+              </div>
+            </div>
+
+            {/* Legend Details */}
+            <div className="grid grid-cols-3 gap-3 text-center">
+              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl space-y-0.5">
+                <span className="text-[10px] font-extrabold text-emerald-800 uppercase block">PROFICIENTES</span>
+                <strong className="text-lg font-black text-emerald-700 block">69</strong>
+                <span className="text-[10px] text-emerald-600 font-bold block">39,88%</span>
+              </div>
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl space-y-0.5">
+                <span className="text-[10px] font-extrabold text-amber-800 uppercase block">QUASE PROFICIENTES</span>
+                <strong className="text-lg font-black text-amber-700 block">59</strong>
+                <span className="text-[10px] text-amber-600 font-bold block">34,10%</span>
+              </div>
+              <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl space-y-0.5">
+                <span className="text-[10px] font-extrabold text-rose-800 uppercase block">ATENÇÃO URGENTE</span>
+                <strong className="text-lg font-black text-rose-700 block">45</strong>
+                <span className="text-[10px] text-rose-600 font-bold block">26,01%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 6. Interactive Visual Analytics Section (Histórico S1..S5 + Categorias) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 print:grid-cols-1">
         {/* Dynamic line chart of Exam Progress */}
         <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs lg:col-span-2 space-y-6">
           <div>
             <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wide flex items-center gap-1.5">
-              <TrendingUp className="w-4 h-4 text-blue-600" /> Rendimento Histórico dos Simulados
+              <TrendingUp className="w-4 h-4 text-blue-600" /> Rendimento Histórico dos Simulados (S1 a S5)
             </h3>
-            <p className="text-[11px] text-slate-400">Evolução do rendimento médio consolidado para as avaliações aplicadas S1, S2, S3 e S4.</p>
+            <p className="text-[11px] text-slate-400">Evolução do rendimento médio consolidado calculado dinamicamente para as edições S1, S2, S3, S4 e S5.</p>
           </div>
 
           <div className="h-64 bg-slate-50 border border-slate-100 rounded-xl p-4 flex flex-col justify-between relative overflow-hidden">
@@ -471,11 +723,10 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
                 </linearGradient>
               </defs>
 
-              {/* Dynamic Coordinate points calculations */}
+              {/* Dynamic Coordinate points calculations for 5 exams */}
               {(() => {
                 const points = examAverages.map((exam, idx) => {
-                  const x = 50 + (idx * 133); // Spans evenly across 500 max width
-                  // Convert 0-100% value to 0-150px height inside SVG coordinate plane
+                  const x = 40 + (idx * 105); // Spans 5 points evenly across SVG plane
                   const y = 140 - ((exam.value / 100) * 120);
                   return { x, y, value: exam.value, label: exam.label };
                 });
@@ -506,7 +757,7 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
                           cx={p.x}
                           cy={p.y}
                           r="6"
-                          fill="#2563eb"
+                          fill={p.label === 'S5' ? '#059669' : '#2563eb'}
                           stroke="#ffffff"
                           strokeWidth="2"
                           className="transition-all hover:scale-125 cursor-pointer"
@@ -516,8 +767,8 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
                           x={p.x}
                           y={p.y - 10}
                           textAnchor="middle"
-                          fill="#1e293b"
-                          className="text-[10px] font-extrabold"
+                          fill={p.label === 'S5' ? '#047857' : '#1e293b'}
+                          className="text-[10px] font-black"
                         >
                           {p.value}%
                         </text>
@@ -529,22 +780,26 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
             </svg>
 
             {/* X-Axis bottom labels */}
-            <div className="flex justify-between text-[10px] font-bold text-slate-500 uppercase z-20 pt-48 px-12 print:px-6">
+            <div className="flex justify-between text-[10px] font-bold text-slate-500 uppercase z-20 pt-48 px-8 print:px-4">
               <div className="text-center">
-                <span className="block text-slate-400 font-extrabold text-[8px]">Março</span>
-                <span>Simulado 1</span>
+                <span className="block text-slate-400 font-extrabold text-[8px]">Simulado 1</span>
+                <span>S1</span>
               </div>
               <div className="text-center">
-                <span className="block text-slate-400 font-extrabold text-[8px]">Abril</span>
-                <span>Simulado 2</span>
+                <span className="block text-slate-400 font-extrabold text-[8px]">Simulado 2</span>
+                <span>S2</span>
               </div>
               <div className="text-center">
-                <span className="block text-slate-400 font-extrabold text-[8px]">Maio</span>
-                <span>Simulado 3</span>
+                <span className="block text-slate-400 font-extrabold text-[8px]">Simulado 3</span>
+                <span>S3</span>
               </div>
               <div className="text-center">
-                <span className="block text-slate-400 font-extrabold text-[8px]">Junho</span>
-                <span>Simulado 4</span>
+                <span className="block text-slate-400 font-extrabold text-[8px]">Simulado 4</span>
+                <span>S4</span>
+              </div>
+              <div className="text-center">
+                <span className="block text-emerald-600 font-extrabold text-[8px]">ENAMED 05</span>
+                <span className="text-emerald-700 font-black">S5</span>
               </div>
             </div>
           </div>
@@ -554,17 +809,15 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
         <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs space-y-4">
           <div>
             <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wide flex items-center gap-1.5">
-              <Award className="w-4 h-4 text-blue-600" /> Distribuição de Alunos
+              <Award className="w-4 h-4 text-blue-600" /> Distribuição Geral
             </h3>
-            <p className="text-[11px] text-slate-400">Classificação atualizada com base na performance geral das médias ponderadas.</p>
+            <p className="text-[11px] text-slate-400">Classificação atualizada com base nas médias ponderadas unificadas.</p>
           </div>
 
           <div className="space-y-3 pt-1">
             {categoryDistribution.map((cat, i) => {
-              // Custom text and progress colors based on class
               const isHigh = cat.name.includes('Proficiente') && !cat.name.includes('Não');
               const isAlert = cat.name.includes('Alerta') || cat.name.includes('Sem possibilidade');
-              
               const barColor = isHigh ? 'bg-emerald-500' : isAlert ? 'bg-rose-500' : 'bg-amber-500';
 
               return (
@@ -583,14 +836,93 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
         </div>
       </div>
 
-      {/* 5. Students Database Table Section */}
+      {/* 7. BLOCO NOVO REQUERIDO: RANKING ENAMED 05 (TOP 10 S5) & ALUNOS EM ATENÇÃO URGENTE */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* RANKING ENAMED 05 */}
+        <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden flex flex-col justify-between">
+          <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wide flex items-center gap-2">
+                <Trophy className="w-4 h-4 text-amber-500" /> RANKING ENAMED 05
+              </h3>
+              <p className="text-[11px] text-slate-400">Top 10 maiores notas obtidas no Simulado 5.</p>
+            </div>
+            <span className="px-2.5 py-0.5 bg-amber-50 border border-amber-200 text-amber-700 text-[10px] font-black rounded-full">
+              TOP 10
+            </span>
+          </div>
+
+          <div className="divide-y divide-slate-100 text-xs font-medium">
+            {top10Enamed05.map((al, idx) => (
+              <div key={idx} className="p-3.5 flex items-center justify-between hover:bg-slate-50/60 transition-colors">
+                <div className="flex items-center gap-3">
+                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black ${
+                    idx === 0 ? 'bg-amber-400 text-slate-950 shadow-2xs' :
+                    idx === 1 ? 'bg-slate-300 text-slate-950' :
+                    idx === 2 ? 'bg-amber-700 text-white' : 'bg-slate-100 text-slate-600'
+                  }`}>
+                    {idx + 1}
+                  </span>
+                  <div>
+                    <h4 className="font-extrabold text-slate-900 leading-tight">{al.nome}</h4>
+                    <span className="text-[10px] text-slate-400 font-semibold">{al.periodo} Período</span>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="text-sm font-black text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
+                    {al.notaS5}%
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ALUNOS EM ATENÇÃO URGENTE */}
+        <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden flex flex-col justify-between">
+          <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wide flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-rose-600" /> ALUNOS EM ATENÇÃO URGENTE (ENAMED 05)
+              </h3>
+              <p className="text-[11px] text-slate-400">Estudantes em faixa crítica/atenção para a meta da IES no Simulado 5.</p>
+            </div>
+            <span className="px-2.5 py-0.5 bg-rose-50 border border-rose-200 text-rose-700 text-[10px] font-black rounded-full">
+              {alunosAtencaoUrgente.length} Alunos
+            </span>
+          </div>
+
+          <div className="divide-y divide-slate-100 text-xs font-medium max-h-[420px] overflow-y-auto">
+            {alunosAtencaoUrgente.slice(0, 10).map((al, idx) => (
+              <div key={idx} className="p-3.5 hover:bg-rose-50/30 transition-colors space-y-1">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-extrabold text-slate-900">{al.nome}</h4>
+                  <span className="text-[10px] font-extrabold text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">
+                    S5: {al.s5}%
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-[10px] text-slate-500 pt-0.5">
+                  <div>
+                    <span className="font-bold text-slate-700">Pior Área:</span> {al.piorAreaEnamed05 || 'Clínica Médica'}
+                  </div>
+                  <div>
+                    <span className="font-bold text-slate-700">Ação:</span> {al.acaoEnamed05 || 'Intervenção urgente'}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* 8. Students Database Table Section */}
       <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
         <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h3 className="text-sm font-extrabold text-slate-900 uppercase tracking-wide flex items-center gap-2">
-              <Users className="w-4 h-4 text-blue-600" /> Registros Detalhados dos Alunos
+              <Users className="w-4 h-4 text-blue-600" /> Tabela Principal de Alunos
             </h3>
-            <p className="text-[11px] text-slate-400">Acesse notas individuais de simulados, média unificada, e histórico de interações acadêmicas.</p>
+            <p className="text-[11px] text-slate-400">Visão unificada das notas de S1 a S5, média geral e status pedagógico.</p>
           </div>
           <span className="text-xs font-bold text-slate-500 bg-slate-100 border border-slate-200 px-3 py-1 rounded-full self-start">
             Exibindo {filteredAndSortedAlunos.length} aluno(s)
@@ -603,20 +935,23 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200 text-[10px] font-extrabold uppercase text-slate-500 tracking-wider">
                 <th className="py-3 px-4 cursor-pointer hover:text-slate-900" onClick={() => handleSort('nome')}>
-                  Aluno {sortField === 'nome' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}
+                  ALUNO {sortField === 'nome' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}
                 </th>
                 <th className="py-3 px-4 cursor-pointer hover:text-slate-900" onClick={() => handleSort('periodo')}>
-                  Período {sortField === 'periodo' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}
+                  PERÍODO {sortField === 'periodo' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}
                 </th>
                 <th className="py-3 px-2 text-center">S1</th>
                 <th className="py-3 px-2 text-center">S2</th>
                 <th className="py-3 px-2 text-center">S3</th>
                 <th className="py-3 px-2 text-center">S4</th>
-                <th className="py-3 px-4 text-center cursor-pointer hover:text-slate-900" onClick={() => handleSort('media')}>
-                  Média unificada {sortField === 'media' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}
+                <th className="py-3 px-2 text-center cursor-pointer hover:text-slate-900 text-blue-700 bg-blue-50/50" onClick={() => handleSort('s5')}>
+                  S5 {sortField === 's5' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}
                 </th>
-                <th className="py-3 px-4">Classificação Acadêmica</th>
-                <th className="py-3 px-4 text-right">Ações</th>
+                <th className="py-3 px-4 text-center cursor-pointer hover:text-slate-900" onClick={() => handleSort('media')}>
+                  MÉDIA {sortField === 'media' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}
+                </th>
+                <th className="py-3 px-4">CLASSIFICAÇÃO</th>
+                <th className="py-3 px-4 text-right">AÇÕES</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-xs font-medium text-slate-700">
@@ -625,13 +960,14 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
                   <tr key={index} className="hover:bg-slate-50/50 transition-colors">
                     <td className="py-3 px-4">
                       <div className="font-extrabold text-slate-900 leading-tight">{al.nome}</div>
-                      <div className="text-[10px] text-slate-400 font-semibold mt-0.5">{al.telefone}</div>
+                      <div className="text-[10px] text-slate-400 font-semibold mt-0.5">{al.telefone || 'Sem contato'}</div>
                     </td>
                     <td className="py-3 px-4 text-slate-500 font-bold">{al.periodo}</td>
-                    <td className="py-3 px-2 text-center font-bold text-slate-600">{al.s1}</td>
-                    <td className="py-3 px-2 text-center font-bold text-slate-600">{al.s2}</td>
-                    <td className="py-3 px-2 text-center font-bold text-slate-600">{al.s3}</td>
-                    <td className="py-3 px-2 text-center font-bold text-slate-600">{al.s4}</td>
+                    <td className="py-3 px-2 text-center font-bold text-slate-600">{al.s1 || '-'}</td>
+                    <td className="py-3 px-2 text-center font-bold text-slate-600">{al.s2 || '-'}</td>
+                    <td className="py-3 px-2 text-center font-bold text-slate-600">{al.s3 || '-'}</td>
+                    <td className="py-3 px-2 text-center font-bold text-slate-600">{al.s4 || '-'}</td>
+                    <td className="py-3 px-2 text-center font-black text-blue-700 bg-blue-50/20">{al.s5 || '-'}</td>
                     <td className="py-3 px-4 text-center">
                       <span className="text-xs font-black text-blue-700">
                         {al.media !== null ? `${al.media.toFixed(1)}%` : 'N/A'}
@@ -654,7 +990,7 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={9} className="py-12 text-center text-slate-400 font-semibold">
+                  <td colSpan={10} className="py-12 text-center text-slate-400 font-semibold">
                     Nenhum aluno corresponde aos filtros estabelecidos.
                   </td>
                 </tr>
@@ -689,7 +1025,7 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
         )}
       </div>
 
-      {/* 6. Complete Student Details Modal (Ficha de Acompanhamento) */}
+      {/* 9. Complete Student Details Modal (Ficha de Acompanhamento) */}
       {selectedAluno && (
         <div className="fixed inset-0 bg-slate-950/50 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-in fade-in duration-200 print:hidden">
           <div className="bg-white rounded-xl border border-slate-200 shadow-xl max-w-2xl w-full overflow-hidden flex flex-col font-medium max-h-[90vh]">
@@ -732,25 +1068,29 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
                 </div>
               </div>
 
-              {/* Individual exam progress */}
+              {/* Individual exam progress (S1..S5) */}
               <div className="space-y-2">
-                <span className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider block">Notas Obtidas nos Simulados</span>
-                <div className="grid grid-cols-4 gap-3 text-center">
-                  <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                <span className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider block">Notas Obtidas nos Simulados (S1 a S5)</span>
+                <div className="grid grid-cols-5 gap-2 text-center">
+                  <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-100">
                     <span className="text-[9px] text-slate-400 font-extrabold block">Simulado 1</span>
-                    <strong className="text-base font-extrabold text-slate-800 mt-1 block">{selectedAluno.s1 || 'Não Fez'}</strong>
+                    <strong className="text-sm font-extrabold text-slate-800 mt-0.5 block">{selectedAluno.s1 || 'Não Fez'}</strong>
                   </div>
-                  <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                  <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-100">
                     <span className="text-[9px] text-slate-400 font-extrabold block">Simulado 2</span>
-                    <strong className="text-base font-extrabold text-slate-800 mt-1 block">{selectedAluno.s2 || 'Não Fez'}</strong>
+                    <strong className="text-sm font-extrabold text-slate-800 mt-0.5 block">{selectedAluno.s2 || 'Não Fez'}</strong>
                   </div>
-                  <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                  <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-100">
                     <span className="text-[9px] text-slate-400 font-extrabold block">Simulado 3</span>
-                    <strong className="text-base font-extrabold text-slate-800 mt-1 block">{selectedAluno.s3 || 'Não Fez'}</strong>
+                    <strong className="text-sm font-extrabold text-slate-800 mt-0.5 block">{selectedAluno.s3 || 'Não Fez'}</strong>
                   </div>
-                  <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                  <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-100">
                     <span className="text-[9px] text-slate-400 font-extrabold block">Simulado 4</span>
-                    <strong className="text-base font-extrabold text-slate-800 mt-1 block">{selectedAluno.s4 || 'Não Fez'}</strong>
+                    <strong className="text-sm font-extrabold text-slate-800 mt-0.5 block">{selectedAluno.s4 || 'Não Fez'}</strong>
+                  </div>
+                  <div className="p-2.5 bg-blue-50/70 rounded-lg border border-blue-200/60">
+                    <span className="text-[9px] text-blue-700 font-black block">Simulado 5</span>
+                    <strong className="text-sm font-black text-blue-900 mt-0.5 block">{selectedAluno.s5 || 'Não Fez'}</strong>
                   </div>
                 </div>
               </div>
@@ -783,6 +1123,29 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
                   </div>
                 </div>
               </div>
+
+              {/* ENAMED 05 Intervention Data if present */}
+              {(selectedAluno.piorAreaEnamed05 || selectedAluno.acaoEnamed05) && (
+                <div className="p-4 bg-amber-50/60 rounded-xl border border-amber-200/70 space-y-2 text-xs">
+                  <span className="text-[10px] font-black text-amber-900 uppercase flex items-center gap-1.5">
+                    <Target className="w-3.5 h-3.5 text-amber-600" /> Diagnóstico ENAMED 05 (Intervenção Pedagógica)
+                  </span>
+                  <div className="grid grid-cols-2 gap-3 text-slate-700">
+                    <div>
+                      <span className="font-bold text-slate-800">Pior Área:</span> {selectedAluno.piorAreaEnamed05 || 'N/A'}
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-800">Pior Tema:</span> {selectedAluno.piorTemaEnamed05 || 'N/A'}
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-800">Engajamento:</span> {selectedAluno.engajamentoEnamed05 || 'N/A'}
+                    </div>
+                    <div>
+                      <span className="font-bold text-slate-800">Ação Recomendada:</span> {selectedAluno.acaoEnamed05 || 'N/A'}
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Tutors observations / feedback block */}
               <div className="p-4 bg-slate-50 rounded-lg border border-slate-100 space-y-1.5 text-xs">
@@ -819,6 +1182,12 @@ export function SimulaMedModule({ subPage, setSubPage }: SimulaMedModuleProps) {
           </div>
         </div>
       )}
+      {/* Module Footer Credit */}
+      <div className="pt-6 border-t border-slate-200/60 text-center pb-2 print:hidden">
+        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+          Plataforma SimulaMed • <span className="text-slate-600 font-extrabold">Desenvolvido por V3L0Z</span>
+        </p>
+      </div>
     </div>
   );
 }
