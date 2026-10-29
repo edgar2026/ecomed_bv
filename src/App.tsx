@@ -107,12 +107,20 @@ export default function App() {
 
       {/* Main Content Pane */}
       <div className="flex-1 flex flex-col min-w-0" style={{ marginLeft: 'var(--spacing-sidebar-width, 256px)' }}>
-        {/* Top header bar */}
-        <Header activeModule={activeModule} activeSubPage={activeSubPage} onSearch={handleGlobalSearch} />
+        {/* Top header bar — hidden on Home */}
+        {activeModule !== 'home' && (
+          <Header activeModule={activeModule} activeSubPage={activeSubPage} onSearch={handleGlobalSearch} />
+        )}
 
         {/* Primary Content Scroll View */}
-        <main className="flex-1 overflow-y-auto p-6 mt-16 pb-20">
-          <div className="w-full max-w-7xl mx-auto">
+        <main
+          className={`flex-1 overflow-y-auto pb-6 ${
+            activeModule === 'home'
+              ? 'mt-0 pt-2 sm:pt-3 md:pt-4 px-2 sm:px-3 md:px-4 lg:px-6'
+              : 'p-6 mt-16'
+          }`}
+        >
+          <div className={activeModule === 'home' ? 'w-full' : 'w-full max-w-7xl mx-auto'}>
             {activeModule === 'home' && (
               <HomeModule
                 setActiveModule={setActiveModule}
@@ -160,6 +168,11 @@ export default function App() {
             )}
           </div>
         </main>
+
+        {/* Global Footer */}
+        <footer className="px-6 py-4 shrink-0 bg-white border-t border-outline-variant text-center text-xs text-slate-500">
+          Desenvolvido por Veloz / Edgar Tavares
+        </footer>
       </div>
 
       {/* Floating Modal for New Scale Generation */}

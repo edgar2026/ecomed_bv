@@ -4,7 +4,7 @@ import {
   GraduationCap,
   Sparkles,
   Handshake,
-  LifeBuoy
+  ExternalLink
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -33,7 +33,7 @@ export const MODULES: ModuleInfo[] = [
   },
   {
     id: 'preceptores',
-    label: 'Gestão de Preceptoria',
+    label: 'Dados de Preceptores',
     icon: GraduationCap,
     subPages: [
       { id: 'dashboard', label: 'Dashboard' },
@@ -79,6 +79,25 @@ export const MODULES: ModuleInfo[] = [
   }
 ];
 
+// External sidebar item — same visual pattern as internal modules, opens in a new tab
+const EXTERNAL_MENU_ITEMS: { id: string; label: string; href: string; icon: any }[] = [
+  {
+    id: 'gestao-preceptoria-link',
+    label: 'Gestão de Preceptoria',
+    href: 'https://gestao-preceptores.vercel.app/',
+    icon: ExternalLink
+  }
+];
+
+// Visual order: Home always first, all remaining items alphabetically
+const MENU_ORDER: string[] = [
+  'home',
+  'convenios',
+  'preceptores',
+  'gestao-preceptoria-link',
+  'simulamed'
+];
+
 export function Sidebar({
   activeModule,
   setActiveModule,
@@ -101,7 +120,32 @@ export function Sidebar({
 
       {/* Main Modules Navigation List — 4 modules only, no sub-items shown */}
       <div className="flex-1 overflow-y-auto px-2 space-y-1 py-2 custom-scrollbar">
-        {MODULES.map((mod) => {
+        {MENU_ORDER.map((key) => {
+          const external = EXTERNAL_MENU_ITEMS.find((item) => item.id === key);
+
+          if (external) {
+            const ExternalIcon = external.icon;
+
+            return (
+              <div key={external.id} className="space-y-0.5">
+                <a
+                  href={external.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center justify-between px-3 py-2.5 rounded transition-all text-left group text-primary-fixed-dim hover:bg-primary-container hover:text-white"
+                >
+                  <div className="flex items-center gap-3">
+                    <ExternalIcon className="w-5 h-5 group-hover:scale-105 transition-transform text-primary-fixed-dim" />
+                    <span className="text-xs font-medium tracking-wide">{external.label}</span>
+                  </div>
+                </a>
+              </div>
+            );
+          }
+
+          const mod = MODULES.find((item) => item.id === key);
+          if (!mod) return null;
+
           const Icon = mod.icon;
           const isSelected = activeModule === mod.id;
 
@@ -131,22 +175,6 @@ export function Sidebar({
             </div>
           );
         })}
-      </div>
-
-      {/* Sidebar Footer */}
-      <div className="mt-auto p-3 border-t border-primary-container bg-primary shrink-0 space-y-1">
-        <button
-          onClick={() => {
-            alert('Suporte técnico: contato@sereducacional.com');
-          }}
-          className="w-full flex items-center gap-3 px-3 py-2 rounded text-primary-fixed-dim hover:bg-primary-container hover:text-white text-xs transition-colors"
-        >
-          <LifeBuoy className="w-4 h-4" />
-          <span>Suporte & Ajuda</span>
-        </button>
-        <div className="px-3 py-1 text-[9px] text-primary-fixed-dim/70 font-semibold tracking-wide uppercase">
-          Versão Executiva 2026
-        </div>
       </div>
     </aside>
   );
