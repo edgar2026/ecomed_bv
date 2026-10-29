@@ -21,7 +21,7 @@ const ganttData = [
   { name: 'Fundação Altino Ventura',     sub: '2 anos · 2025–2027',                           start: 2025,    end: 2027,    color: '#059669' },
   { name: 'APAE-SER',                    sub: 'Nov/2025 – Nov/2027',                          start: 2025.83, end: 2027.83, color: '#2563EB' },
   { name: 'Pref. São Lourenço da Mata',  sub: 'Equipamentos · Fev/2021–Fev/2025 · Vencido',  start: 2021.12, end: 2025.12, color: '#D97706' },
-  { name: 'FMS São Lourenço da Mata',    sub: 'R$ 302.474,90 em bolsas · 9 cursos · 176 vagas', start: 2025.92, end: 2030.92, color: '#2563EB' },
+  { name: 'FMS São Lourenço da Mata',    sub: '10 bolsas integrais · 9 cursos · 176 vagas', start: 2025.92, end: 2030.92, color: '#2563EB' },
   { name: 'HCP – Câncer de PE',          sub: '1º Aditivo · Venc. 21/05/2026 · 2ª renovação',start: 2024.38, end: 2026.38, color: '#F59E0B' },
   { name: 'HARF – Aeronáutica',          sub: 'Edital Nº 01/2025 · 75 vagas/sem.',           start: 2026.45, end: 2028.45, color: '#059669' },
   { name: 'Irmandade Santa Casa',        sub: 'Vence Set/2026 — URGENTE',                     start: 2023,    end: 2026.75, color: '#DC2626' },
@@ -38,7 +38,7 @@ const conveniosData = [
   { id: 1, nome: 'Hospital de Aeronáutica de Recife – HARF', sub: 'Edital Nº 01/2025 · Chamado 16.627.199 · Comando da Aeronáutica', status: 'vigente', cp: 'nocp', vigencia: '12/06/2026 – 12/06/2028', anos: '2 anos · recém-assinado', cursos: [{l:'Medicina',c:'med'},{l:'Enfermagem',c:'enf'},{l:'Fisioterapia',c:''},{l:'+10',c:''}], vagas: '75/sem.', contrapartida: 'Sem contrapartida', urgente: false },
   { id: 2, nome: 'Fundação CAS – PMPE', sub: 'Cooperação Técnica · CNPJ 32.982.258/0001-49', status: 'vigente', cp: 'cp', vigencia: 'Jan/2026 – Jan/2031', anos: '5 anos', cursos: [{l:'Medicina',c:'med'},{l:'Enfermagem',c:'enf'},{l:'Odontologia',c:''},{l:'+8',c:''}], vagas: '186+ (Med.)', contrapartida: 'Desconto 60% mensalidades', urgente: false },
   { id: 3, nome: 'Prefeitura Municipal de São Lourenço da Mata', sub: 'CNPJ 11.251.832/0001-05 · Vinicius Labanca (Prefeito) · Convênio assinado 22/02/2021 · Vigência encerrada Fev/2025', status: 'renovar', cp: 'cp', vigencia: 'Fev/2021 – Fev/2025', anos: 'Vencido', cursos: [{l:'Medicina',c:'med'},{l:'Enfermagem',c:'enf'},{l:'+8',c:''}], vagas: 'A definir', contrapartida: 'Equipamentos (100 esf. + 25 comp.)', urgente: false },
-  { id: 4, nome: 'Fundo Municipal de Saúde – São Lourenço da Mata', sub: 'CNPJ 12.257.765/0001-90 · Otaviano Eduardo Souza (Sec. Municipal de Saúde) · Convênio assinado 16/12/2025 · Chamado 16.356.936', status: 'vigente', cp: 'cp', vigencia: 'Dez/2025 – Dez/2030', anos: '5 anos', cursos: [{l:'Medicina',c:'med'},{l:'Enfermagem',c:'enf'},{l:'+7',c:''}], vagas: '176 vagas', contrapartida: 'R$ 302.474,90 em bolsas', urgente: false },
+  { id: 4, nome: 'Fundo Municipal de Saúde – São Lourenço da Mata', sub: 'CNPJ 12.257.765/0001-90 · Otaviano Eduardo Souza (Sec. Municipal de Saúde) · Convênio assinado 16/12/2025 · Chamado 16.356.936', status: 'vigente', cp: 'cp', vigencia: 'Dez/2025 – Dez/2030', anos: '5 anos', cursos: [{l:'Medicina',c:'med'},{l:'Enfermagem',c:'enf'},{l:'+7',c:''}], vagas: '176 vagas', contrapartida: '10 bolsas integrais', urgente: false },
   { id: 5, nome: 'Hospital de Câncer de Pernambuco – HCP/SPCC', sub: 'CNPJ 10.894.988/0001-33 · Sidney Batista Neves (Sup. Geral) · 1º Aditivo assinado 19/01/2026 · R$ 36.242,46/mês', status: 'renovar', cp: 'cp', vigencia: '21/05/2024 – 21/05/2026', anos: 'Vencido · 2ª renovação em curso', cursos: [{l:'Medicina',c:''},{l:'Multiprofissional',c:''},{l:'18+ vagas',c:''}], vagas: '18+ vagas', contrapartida: 'R$ 36.242,46/mês', urgente: true },
   { id: 6, nome: 'IASSEPE / Hospital dos Servidores do Estado – HSE', sub: 'Instituto de Atenção à Saúde', status: 'vigente', cp: 'cp', vigencia: 'Set/2025 – Set/2029', anos: '4 anos', cursos: [{l:'Medicina',c:'med'},{l:'Enfermagem',c:'enf'},{l:'+6',c:''}], vagas: 'A definir', contrapartida: 'Cursos + descontos', urgente: false },
   { id: 7, nome: 'Irmandade da Santa Casa de Misericórdia de PE', sub: 'R$ 1.478–1.700/vaga · Prazo iminente', status: 'urgente renovar', cp: 'cp', vigencia: 'Vence Set/2026', anos: '~3 meses restantes', cursos: [{l:'Medicina',c:'med'},{l:'Enfermagem',c:'enf'},{l:'+outros',c:''}], vagas: 'A confirmar', contrapartida: 'R$ 1.478–1.700/vaga', urgente: true },
@@ -563,8 +563,8 @@ export function ConveniosModule() {
             <div className="cm-cp-card">
               <div className="cm-cp-card-name">Fundo Municipal de Saúde – São Lourenço da Mata</div>
               <div className="cm-cp-card-sub">CNPJ 12.257.765/0001-90 · Convênio assinado 16/12/2025 · Dez/2025 – Dez/2030 · Chamado 16.356.936</div>
-              <div className="cm-cp-card-value" style={{color:'#C8102E',fontSize:'15px',fontWeight:700}}>R$ 302.474,90 em bolsas</div>
-              <div className="cm-cp-detail">Contrapartida (Cláusula 9ª): <strong>R$ 302.474,90</strong> em bolsas integrais de estudo.<br/><strong>Graduação presencial:</strong> 2 bolsas de Direito (R$ 256.354,80).<br/><strong>Graduação EAD:</strong> Administração, R. Humanos, Nutrição, Ciências Contábeis, Gestão Pública (5 bolsas · R$ 32.161,76).<br/><strong>Pós-graduação EAD:</strong> ABA, Adm. Saúde, Contratos Públicos, Educação Especial, Enfermagem (4 esp.) e Epidemiologia (9 bolsas · R$ 13.958,34).<br/><strong>Campo de estágio:</strong> 176 vagas · 9 cursos de saúde · H. Petronila Campos + CEM + PSF São Lourenço.</div>
+              <div className="cm-cp-card-value" style={{color:'#C8102E',fontSize:'15px',fontWeight:700}}>Valor não informado no aditivo</div>
+              <div className="cm-cp-detail">Contrapartida (1º Termo Aditivo): <strong>10 bolsas integrais</strong> · valor não informado no aditivo.<br/><strong>Distribuição:</strong> Direito presencial 1 · Farmácia semipresencial 3 · Biomedicina semipresencial 1 · Nutrição semipresencial 1 · Recursos Humanos EAD 1 · ABA, pós-graduação EAD 1 · Gestão em Saúde Pública, pós-graduação EAD 2 (total: 10).<br/><strong>Campo de estágio:</strong> 176 vagas · 9 cursos de saúde · H. Petronila Campos + CEM + PSF São Lourenço.</div>
             </div>
           </div>
         </div>
@@ -651,7 +651,7 @@ export function ConveniosModule() {
                       <li><strong>APAE-SER:</strong> repasse mensal de R$ 2.000,00 + realização de capacitações</li>
                       <li><strong>SES-PE:</strong> concessão de bolsas integrais (10% Med. / 7,5% demais) a servidores</li>
                       <li><strong>CAS/FCAS:</strong> concessão de desconto de 60% em mensalidades presenciais</li>
-                      <li><strong>FMS São Lourenço:</strong> Concessão de campos de estágio para 8 cursos de saúde</li>
+                      <li><strong>FMS São Lourenço:</strong> Concessão de campos de estágio para 8 cursos de saúde e 10 bolsas integrais (1º Termo Aditivo — valor não informado no aditivo)</li>
                     </ul>
                   </div>
                 </div>

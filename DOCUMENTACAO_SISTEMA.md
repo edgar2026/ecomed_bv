@@ -252,6 +252,250 @@ O contrato foi renovado e homologado formalmente em **13/07/2026** (Chamado nº 
 - **SES-PE:** 336 vagas em 9 cursos com contrapartida de bolsas de estudo aos servidores estaduais (10% Medicina / 7,5% demais).
 - **Fundação CAS / PMPE:** 186+ vagas com desconto institucional de 60% nas mensalidades para dependentes da Polícia Militar.
 
+#### Mapa completo dos dados e números atuais
+
+> **Origem:** todos os números abaixo foram extraídos do código-fonte do módulo — `src/components/ConveniosModule.tsx` (961 linhas; **não existe** `src/modules/convenios/` no projeto atual). Constantes: `conveniosData` (l.37-59) e `ganttData` (l.12-34). `src/types.ts` **não possui** interface `Convenio` (apenas `ModuleId` e `Hospital.convenioStatus`).
+> **Natureza:** 100% **dados simulados fixos no código** — sem localStorage, sem fetch, sem Supabase. Nada persiste após recarregar a página.
+
+##### 1. Lista completa dos convênios (21 registros)
+
+| ID | Nome | Status | Contrapartida | Urgente |
+| :--- | :--- | :--- | :--- | :--- |
+| 1 | Hospital de Aeronáutica de Recife – HARF | vigente | nocp | não |
+| 2 | Fundação CAS – PMPE | vigente | cp | não |
+| 3 | Prefeitura Municipal de São Lourenço da Mata | renovar | cp | não |
+| 4 | Fundo Municipal de Saúde – São Lourenço da Mata | vigente | cp | não |
+| 5 | Hospital de Câncer de Pernambuco – HCP/SPCC | renovar | cp | **sim** |
+| 6 | IASSEPE / Hospital dos Servidores do Estado – HSE | vigente | cp | não |
+| 7 | Irmandade da Santa Casa de Misericórdia de PE | urgente renovar | cp | **sim** |
+| 8 | Hospital Santa Joana | urgente renovar | cp | **sim** |
+| 9 | Associação Evangélica Beneficente | urgente | nocp | **sim** |
+| 10 | Hapvida – Assistência Médica | vigente | cp | não |
+| 11 | APAE-SER – Associação de Pais e Amigos | vigente | cp | não |
+| 12 | Secretaria Estadual de Saúde – SES-PE | vigente | cp | não |
+| 13 | Município de Paulista – Secretaria de Saúde | vigente | nocp | não |
+| 14 | Município de Camaragibe – Secretaria de Saúde | vigente | nocp | não |
+| 15 | Município de Jaboatão dos Guararapes | vigente | nocp | não |
+| 16 | Município de Olinda – Secretaria de Saúde | vigente | nocp | não |
+| 17 | Município de Recife – Secretaria de Saúde | renovar | nocp | não |
+| 18 | Fundação Altino Ventura – Oftalmologia | vigente | nocp | não |
+| 19 | HMG e HMJ – Hospitais Maternidade | vigente | nocp | não |
+| 20 | Hospital Memorial do Agreste | vigente | nocp | não |
+| 21 | FEAPAES-PE – Fed. das APAEs de Pernambuco | renovar | nocp | não |
+
+**Contagens por status:** `vigente` = **14** (1,2,4,6,10,11,12,13,14,15,16,18,19,20) · `renovar` = **4** (3,5,17,21) · `urgente renovar` = **2** (7,8) · `urgente` = **1** (9) · **cp = 10** · **nocp = 11** · `urgente: true` = **4** (5,7,8,9).
+
+##### 2. Dados individuais de cada convênio (campo `sub`, vigência, cursos, vagas, contrapartida)
+
+| ID | `sub` (texto completo) | Vigência | Período/`anos` | Cursos (rótulo · classe) | Vagas | Contrapartida (texto) |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| 1 | Edital Nº 01/2025 · Chamado 16.627.199 · Comando da Aeronáutica | 12/06/2026 – 12/06/2028 | 2 anos · recém-assinado | Medicina·med, Enfermagem·enf, Fisioterapia, +10 | 75/sem. | Sem contrapartida |
+| 2 | Cooperação Técnica · CNPJ 32.982.258/0001-49 | Jan/2026 – Jan/2031 | 5 anos | Medicina·med, Enfermagem·enf, Odontologia, +8 | 186+ (Med.) | Desconto 60% mensalidades |
+| 3 | CNPJ 11.251.832/0001-05 · Vinicius Labanca (Prefeito) · Convênio assinado 22/02/2021 · Vigência encerrada Fev/2025 | Fev/2021 – Fev/2025 | Vencido | Medicina·med, Enfermagem·enf, +8 | A definir | Equipamentos (100 esf. + 25 comp.) |
+| 4 | CNPJ 12.257.765/0001-90 · Otaviano Eduardo Souza (Sec. Municipal de Saúde) · Convênio assinado 16/12/2025 · Chamado 16.356.936 | Dez/2025 – Dez/2030 | 5 anos | Medicina·med, Enfermagem·enf, +7 | 176 vagas | 10 bolsas integrais (1º Termo Aditivo · valor não informado) |
+| 5 | CNPJ 10.894.988/0001-33 · Sidney Batista Neves (Sup. Geral) · 1º Aditivo assinado 19/01/2026 · R$ 36.242,46/mês | 21/05/2024 – 21/05/2026 | Vencido · 2ª renovação em curso | Medicina, Multiprofissional, 18+ vagas | 18+ vagas | R$ 36.242,46/mês |
+| 6 | Instituto de Atenção à Saúde | Set/2025 – Set/2029 | 4 anos | Medicina·med, Enfermagem·enf, +6 | A definir | Cursos + descontos |
+| 7 | R$ 1.478–1.700/vaga · Prazo iminente | Vence Set/2026 | ~3 meses restantes | Medicina·med, Enfermagem·enf, +outros | A confirmar | R$ 1.478–1.700/vaga |
+| 8 | R$ 4.500/vaga · Vence 2026 | 2024 – 2026 | Meses restantes | Medicina·med | A confirmar | R$ 4.500/vaga + EAD |
+| 9 | Possível vencimento em 2026 – status a confirmar | 2019 – 2026 (est.) | Possível expiração | Medicina·med | — | Sem contrapartida |
+| 10 | Unidade Baixa Verde (CNPJ 63.554.067/0210-04) · Chamado 16.902.214 · Assinado Jul/2026 | 2026.1 – 2027.1 (12 meses) | Vigente (Renovado Jul/2026) | Medicina·med | 37 alunos/sem. | R$ 3.300/aluno (R$ 122.100/sem.) · Cirurgia, Pediatria, Urgência |
+| 11 | SER Educacional · Minuta vigente | Nov/2025 – Nov/2027 | 2 anos | Fisioterapia, T. Ocupacional, Fonoaudiologia | A definir | R$ 2.000/mês + eventos |
+| 12 | 336 vagas mapeadas · Bolsas integrais a servidores | Jul/2023 – Jul/2028 | 5 anos | Medicina·med, Enfermagem·enf, Fisioterapia, Biomedicina, +4 | 336 vagas | Bolsas 10% / 7,5% |
+| 13 | Prefeitura Municipal de Paulista | 2021 – 2027 (est.) | 6 anos | Medicina·med, Enfermagem·enf | — | Sem contrapartida |
+| 14 | *(vazio)* | 2021 – 2027 (est.) | 6 anos | Medicina·med, Enfermagem·enf | — | Sem contrapartida |
+| 15 | Fundo Municipal de Saúde | 2022 – 2027 (est.) | 5 anos | Medicina·med, Enfermagem·enf | — | Sem contrapartida |
+| 16 | *(vazio)* | 2022 – 2032 | 10 anos | Medicina·med, Enfermagem·enf | — | Sem contrapartida |
+| 17 | SESAU Declaração out/2024 · Medicina, Nutrição e Psicologia | **A confirmar** | *(vazio)* | Medicina·med, Nutrição, Psicologia | — | Sem contrapartida |
+| 18 | *(vazio)* | 2025 – 2027 (est.) | 2 anos | Medicina·med, Enfermagem·enf | — | Sem contrapartida |
+| 19 | Hospitais Municipais de Goiana e Jaboatão | desde 2016 – ~2028 | Convênio longo prazo | Medicina·med, Enfermagem·enf | — | Sem contrapartida |
+| 20 | Caruaru-PE | 2023 – 2033 | 10 anos | Medicina·med, Enfermagem·enf | — | Sem contrapartida |
+| 21 | CNPJ 01.156.276/0001-26 · Caruaru-PE · Dr. Gilvan Florêncio | Em tramitação | *(vazio)* | Fisioterapia, T. Ocupacional, Fonoaudiologia | — | Sem contrapartida |
+
+**Distribuição do campo `vagas`:** numéricas = 6 registros (**75**, **186+**, **176**, **18+**, **37**, **336** → soma derivada = **828+ vagas**) · `A definir` = 3 (3,6,11) · `A confirmar` = 2 (7,8) · `—` = 10 (9,13-21). O código **não calcula nenhum total de vagas**. (Somando os 24 da Santa Joana — que só existem em views fixas — a soma visual chega a 852+.)
+
+##### 3. Vagas por curso
+
+**Cobertura por curso (view "Cursos & Vagas", l.585-590 — array fixo, não calculado):**
+
+| Curso | Convênios | % da barra |
+| :--- | :--- | :--- |
+| Medicina | 19 | 90% |
+| Enfermagem | 17 | 80% |
+| Fisioterapia | 14 | 65% |
+| Nutrição | 12 | 55% |
+| Biomedicina | 11 | 50% |
+| Farmácia | 10 | 45% |
+| Odontologia | 9 | 40% |
+| Psicologia | 9 | 40% |
+| Terapia Ocupacional | 7 | 30% |
+| Fonoaudiologia | 6 | 28% |
+| Serviço Social | 5 | 25% |
+| Educação Física | 4 | 20% |
+| Téc. Radiologia | 3 | 14% |
+| Estética e Cosmético | 2 | 10% |
+| Téc. Laboratório | 2 | 10% |
+| Téc. Enfermagem | 2 | 8% |
+
+⚠️ O dashboard (l.376-381) traz **Fisioterapia 15 (70%)** — divergente dos 14 (65%) da view de Cursos.
+
+**Vagas detalhadas por convênio (painéis fixos, l.603-609):** Hapvida **37** vagas Med. · HARF **75**/semestre · HCP **18** vagas · CAS **186+** · SES-PE **336** · Santa Joana **24** vagas Med.
+**Breakdowns fixos:** SES-PE 336 = Enf. 130 + Med. 80 + Fisio. 42 + Bio. 28 + Farm. 28 + Nutr. 7 + Odonto. 7 + S.Social 7 + Psico. 7 (soma = 336 ✓). Santa Joana 24 = Clínica Médica 6 + Pediatria 6 + UTI 6 + Cirurgia Geral 4 + Urgência/Emergência 2 (soma = 24 ✓). FMS SLM: 176 vagas em 9 cursos. HARF: 13 cursos listados na view dedicada (l.716).
+
+##### 4. Vigências
+
+Todas como **string livre** no campo `vigencia` (não há datas tipadas nem cálculo de vencimento). Registradas na tabela do item 2. Destaques: vigências vencidas/expirando = ID 3 (Fev/2025), 5 (21/05/2026), 7 (Set/2026), 8 (2026), 9 (2026 est.); “A confirmar” = ID 17; “Em tramitação” = ID 21; maior prazo = ID 20 (2023–2033). Nenhum alerta é calculado — o booleano `urgente` e a barra de urgência são fixos.
+
+##### 5. Contrapartidas
+
+**Classificação:** `cp` = 10 (IDs 2,3,4,5,6,7,8,10,11,12) · `nocp` = 11 (IDs 1,9,13-21). ⚠️ A legenda do donut (l.311-312) exibe "**11** convênios · 52% com / **10** · 48% sem" — **invertida** em relação aos dados; a view Contrapartidas (l.460) exibe "10" (correto); o chip de Obrigações exibe "**11 convênios**" (l.644, incorreto para cp).
+
+**Modalidades cadastradas:**
+
+| Modalidade | Convênio | Valor/quantidade exibida |
+| :--- | :--- | :--- |
+| Financeira mensal | HCP | R$ 36.242,46/mês (R$ 434.909,52/ano) |
+| Financeira por aluno | Hapvida | R$ 3.300,00/aluno → R$ 122.100,00/semestre (37 alunos) |
+| Financeira por vaga | Santa Casa | R$ 1.478 – R$ 1.700/vaga/mês |
+| Financeira por vaga | Santa Joana | R$ 4.500/vaga/mês |
+| Financeira mensal | APAE-SER | R$ 2.000,00/mês + eventos |
+| Bolsas | FMS São Lourenço da Mata | 10 bolsas integrais (1º Termo Aditivo) — valor não informado no aditivo |
+| Bolsas % | SES-PE | Bolsas integrais 10% Medicina / 7,5% demais |
+| Desconto | Fundação CAS | 60% nas mensalidades presenciais (exceto Medicina) |
+| Descontos/cursos | IASSEPE/HSE | Cursos + formação continuada (sem valor) |
+| Equipamentos | Prefeitura SLM | 100 esfigmomanômetros, 15 turbinas, 15 canetas, 25 computadores, 25 balanças |
+| EAD/plataformas | Santa Joana | UPTODATE + ISEP + vagas EAD |
+| Sem contrapartida | HARF e mais 10 (nocp) | "Sem contrapartida" / HARF = R$ 0 |
+
+##### 6. Valores financeiros exibidos (todos fixos no JSX)
+
+| Valor | Significado | Onde aparece |
+| :--- | :--- | :--- |
+| R$ 36.242,46/mês · R$ 434.909,52/ano | HCP total (1º aditivo) | l.490, 648 |
+| R$ 1.487,17/vaga/mês × 18 = R$ 26.769,06 | HCP Medicina | l.493 |
+| R$ 9.473,40/mês | HCP Multiprofissional | l.493 |
+| R$ 3.300,00/aluno · R$ 122.100,00/semestre | Hapvida (37 alunos) | l.474, 647 |
+| R$ 1.478 – R$ 1.700/vaga/mês | Santa Casa | l.503, 649 |
+| R$ 4.500/vaga/mês | Santa Joana | l.509, 650 |
+| R$ 2.000,00/mês | APAE-SER | l.524, 651 |
+| Valor não informado no aditivo | FMS SLM — contrapartida do 1º Termo Aditivo (10 bolsas integrais) | l.566-567 |
+| R$ 36k/mês · R$ 2k · 60% | KPIs da faixa Contrapartidas | l.459-462 |
+| R$ 0 | HARF contrapartida financeira | l.708 |
+| "R$ 4.500/vaga/mês em risco" | barra de urgência | l.347 |
+
+**Nenhum total financeiro é somado pelo sistema.** Verificações aritméticas dos valores fixos: 18 × 1.487,17 = 26.769,06 ✓ · 26.769,06 + 9.473,40 = 36.242,46 ✓ · 36.242,46 × 12 = 434.909,52 ✓ · 37 × 3.300 = 122.100 ✓.
+
+##### 7. Bolsas e descontos
+
+- **FMS São Lourenço da Mata (1º Termo Aditivo do convênio celebrado em 16/12/2025 · vigência até 15/12/2030):** **10 bolsas integrais** — Direito presencial **1** · Farmácia semipresencial **3** · Biomedicina semipresencial **1** · Nutrição semipresencial **1** · Recursos Humanos EAD **1** · ABA, pós-graduação EAD **1** · Gestão em Saúde Pública, pós-graduação EAD **2** (soma = **10** ✓). **Valor financeiro não informado no aditivo** — a composição simulada anterior foi removida e nenhum novo valor foi calculado ou estimado.
+- **SES-PE:** bolsas integrais a servidores — **10%** das vagas de Medicina e **7,5%** das demais, por semestre; 336 vagas mapeadas.
+- **Fundação CAS:** **60%** de desconto em mensalidades de cursos presenciais (exceto Medicina) para colaboradores da PMPE; EAD com desconto negociado separadamente.
+- **IASSEPE/HSE:** cursos e treinamentos oferecidos à equipe (sem percentual/valor).
+
+##### 8. Indicadores e fórmulas
+
+| Indicador | Valor exibido | Fórmula/regra no código | Automático ou fixo | Registros |
+| :--- | :--- | :--- | :--- | :--- |
+| Vigentes (KPI hero) | **14** | `conveniosData.filter(r => r.status === 'vigente').length` (l.122) | **Automático** | status exato `vigente` |
+| Em renovação (KPI hero) | **6** | `filter(r => r.status.includes('renovar'))` (l.123) | **Automático** | 3,5,7,8,17,21 (inclui `urgente renovar`) |
+| Urgentes (KPI hero) | **3** | `filter(r => r.status.includes('urgente'))` (l.124) | **Automático** | 7,8,9 |
+| Total de convênios | **21** | `conveniosData.length` (l.288, 308) | **Automático** | todos |
+| Badge "21" da sub-sidebar | 21 | literal `21` (l.207) | **Fixo** | — |
+| Chips de filtro | Todos 21 · Vigente 14 · Renovação 6 · Urgente 3 | reutilizam os KPIs (l.406); cp/nocp **sem contagem** | Automático | — |
+| Filtro da tabela | varia | `filteredConvenios` com `includes()`/igualdade (l.127-137) | Automático | — |
+| % do donut/barras | 66,7% / 28,6% / 14,3% | `(kpi/21)*100` com **divisor fixo 21** (l.301-332) | Automático (divisor fixo) | todos |
+| Legenda do donut | 11 (52%) / 10 (48%) cp vs nocp | **Texto fixo** (l.311-312) — invertido vs dados (10/11) | **Fixo** | — |
+| "Convênios com contrapartida" | 10 | literal (l.460) | **Fixo** (coincide com dados) | — |
+| Chip "11 convênios" (obrigações) | 11 | literal (l.644) | **Fixo** (diverge: cp = 10) | — |
+| Distribuição contrapartidas | 4 (40%) · 3 (28%) · 3 (28%) · 1 (14%) | array fixo l.361-365 (soma = 11; % soma 110%) | **Fixo** | — |
+| Cobertura de cursos (dashboard) | 19/17/15/13/11 | array fixo l.376-381 | **Fixo** | — |
+| Cobertura de cursos (view) | 19/17/14/12/11/10/9/9/7/6/5/4/3/2/2/2 | array fixo l.585-590 | **Fixo** | — |
+| Status dot/label | Vigente/Urgente/Verificar/Em renovação | `statusDot` e `statusLabel` (l.153-166) | Automático (por string) | — |
+| KPIs da faixa Contrapartidas | R$ 36k · 10 · R$ 2k · 60% | literais (l.459-462) | **Fixo** | — |
+| HARF: 75 / 13 / R$ 0 / cotas 8·23·44 | literais (l.706-708, 723) | 10% de 75 = 8 (arred.), 30% = 23, gerais 44 (8+23+44 = 75 ✓) | **Fixo** | — |
+
+⚠️ Sobreposição: IDs 7 e 8 entram **ao mesmo tempo** em "Em renovação" (6) e "Urgentes" (3); 14 + 6 + 3 = 23 > 21, por isso os segmentos do donut somam mais que 100% do círculo.
+
+##### 9. Dados dos gráficos
+
+| Gráfico | Fonte | Cálculo |
+| :--- | :--- | :--- |
+| Donut "Distribuição por Status" (SVG, l.297-309) | `kpiVigente/kpiRenovar/kpiUrgente` | `strokeDasharray = (kpi/21)*219.9` (circunferência 2π·35 = 219.9); offsets encadeados; centro = `conveniosData.length` |
+| Barras de breakdown (l.316-335) | mesmos KPIs | `width = (kpi/21)*100%` |
+| Legenda cp/nocp (l.311-312) | texto fixo | sem cálculo (valores invertidos) |
+| Barra de urgência (l.340-350) | texto fixo | Assoc. Evangélica "Vencimento 2026" · Santa Casa "Set/2026 · ~3 meses" · Santa Joana "2026 · 24 vagas · R$ 4.500/vaga/mês" |
+| Painel "Contrapartidas por tipo" (l.361-365) | array fixo | Financeira 4/40% · Bolsas-Descontos 3/28% · Serviços 3/28% · Vagas EAD 1/14% |
+| Painel "Cobertura de cursos" (l.376-381) | array fixo | 19/90% · 17/80% · 15/70% · 13/60% · 11/50% |
+| Cobertura view Cursos (l.585-594) | array fixo | 16 linhas com `v` e `pct` independentes (sem relação com `conveniosData`) |
+| Cotas HARF (l.723-727) | array fixo | 75 (100%) · 8 PcD (10%) · 23 negros (30%) · 44 gerais (60%) |
+
+##### 10. Dados do Gantt
+
+Fonte: `ganttData` (l.12-34) — **array paralelo e independente** de `conveniosData` (alterar a vigência na tabela **não** altera o Gantt, e vice-versa).
+
+| # | Convênio (name) | sub | start | end | cor |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 1 | Município de Olinda | 10 anos · 2022–2032 | 2022 | 2032 | #059669 |
+| 2 | HMG / HMJ | desde 2016 | 2023 | 2028 | #059669 |
+| 3 | Hosp. Memorial Agreste | 10 anos · Caruaru | 2023 | 2033 | #059669 |
+| 4 | Município de Paulista | 6 anos · 2021–2027 | 2021 | 2027 | #059669 |
+| 5 | Município de Camaragibe | 6 anos · 2021–2027 | 2021 | 2027 | #059669 |
+| 6 | Município de Jaboatão | 5 anos · 2022–2027 | 2022 | 2027 | #059669 |
+| 7 | SES-PE | Bolsas 10%/7,5% · 336 vagas | 2023 | 2028 | #2563EB |
+| 8 | IASSEPE / HSE | Set/2025 – Set/2029 | 2025.67 | 2029.67 | #059669 |
+| 9 | Fundação Altino Ventura | 2 anos · 2025–2027 | 2025 | 2027 | #059669 |
+| 10 | APAE-SER | Nov/2025 – Nov/2027 | 2025.83 | 2027.83 | #2563EB |
+| 11 | Pref. São Lourenço da Mata | Vencido · Fev/2021–Fev/2025 | 2021.12 | 2025.12 | #D97706 |
+| 12 | FMS São Lourenço da Mata | 10 bolsas integrais · 9 cursos · 176 vagas | 2025.92 | 2030.92 | #2563EB |
+| 13 | HCP – Câncer de PE | 1º Aditivo · Venc. 21/05/2026 | 2024.38 | 2026.38 | #F59E0B |
+| 14 | HARF – Aeronáutica | Edital 01/2025 · 75 vagas/sem. | 2026.45 | 2028.45 | #059669 |
+| 15 | Irmandade Santa Casa | Vence Set/2026 — URGENTE | 2023 | 2026.75 | #DC2626 |
+| 16 | Hosp. Santa Joana | Vence 2026 · 24 vagas Medicina | 2024 | 2026.5 | #DC2626 |
+| 17 | Assoc. Evangélica Benfeit. | Vence 2026 — verificar | 2024 | 2026 | #DC2626 |
+| 18 | Município de Recife | Em formalização · SESAU out/2024 | 2025 | 2027 | #9CA3AF |
+| 19 | FEAPAES-PE | Em tramitação · nov/2025 | 2025 | 2027 | #9CA3AF |
+| 20 | Hapvida – Assist. Médica | R$ 3.300/aluno · 37 vagas · 2026.1–2027.1 | 2026.0 | 2027.5 | #059669 |
+| 21 | Fundação CAS – PMPE | Jan/2026 – Jan/2031 · 5 anos | 2026.05 | 2031.05 | #059669 |
+
+- **Cores (valores fixos, não derivados de `status`):** `#059669` verde = vigente (11 barras) · `#2563EB` azul = com contrapartida (3) · `#D97706` âmbar = vencido (1) · `#F59E0B` âmbar claro = HCP (1) · `#DC2626` vermelho = urgente (3) · `#9CA3AF` cinza = em formalização/tramitação (2).
+- **Posicionamento (l.62-104):** grid fixo `YEAR_START = 2023`, 8 colunas (2023…2030, rótulo da última = "2030+"); por célula: `segStart = max(start, ano)`, `segEnd = min(end, ano+1)`, `left% = (segStart-ano)×100`, `width% = (segEnd-segStart)×100`, barra renderizada só se `segEnd > segStart`.
+- **Efeito de mudança de vigência:** alterar `start/end` **apenas nesta constante** reposiciona a barra; não afeta KPIs, tabela, donut nem filtros. Vigências anteriores a 2023 e posteriores a 2031 são **visualmente cortadas** pela grade (ex.: Olinda 2032, Memorial 2033, CAS 2031.05 terminam na última coluna).
+- **Título da seção:** "Vigências · Linha do Tempo 2023–2033" (l.353) — o grid real vai até 2030+.
+
+##### 11. Origem de cada informação
+
+| Informação | Arquivo · constante/faixa | Consumido por |
+| :--- | :--- | :--- |
+| 21 convênios (tabela) | `src/components/ConveniosModule.tsx` · `conveniosData` (l.37-59) | KPIs (l.122-124), filtros (l.127-137), view Todos (l.423), donut/barras (l.301-332), badge implicit via `.length` |
+| 21 barras do Gantt | idem · `ganttData` (l.12-34) | `<GanttChart />` (l.62-113) |
+| KPIs/fórmulas | `useMemo` l.122-124 | hero (l.276-288), chips (l.406), donut, barras |
+| Status label/dot | `statusDot`/`statusLabel` (l.153-166) | tabela (l.429) |
+| Views Contrapartidas/Cursos/Obrigações/HARF | **JSX fixo** (l.456-751) | essas 4 views |
+| CSS `cm-*` | `convenioCss` (l.758-961), injetado via `useEffect` (l.140-151) | todo o módulo |
+| Montagem/rota | `src/App.tsx:166-168` (`<ConveniosModule />` sem props) | — |
+| Item de menu | `src/components/Sidebar.tsx:66-79` | navegação |
+| Tipos | `src/types.ts` — **sem** interface Convenio | — |
+
+**Confirmação de fonte:** dados **diretamente no código** (constantes de módulo + JSX). **Não** há arquivo de dados separado, **não** há localStorage, **não** há Supabase, **não** há outra fonte.
+
+##### 12. Identificação clara dos dados simulados
+
+**Todos os números deste mapa são simulados/fixos**, exceto os KPIs e filtros automaticamente derivados dos mocks (item 8). Não existe nenhum dado real de contrato persistido ou recebido por integração. Blocos 100% hardcoded: toda a view Contrapartidas (inclusive CNPJs, endereços e dados bancários), Cursos, Obrigações, HARF, barra de urgência, painéis de distribuição, legendas e o próprio `ganttData`.
+
+##### 13. Campos que podem ser atualizados com dados reais
+
+Cada registro de `conveniosData` aceita atualização pontual de: `nome`, `sub` (CNPJ/chamado/assinatura), `status`, `cp`, `vigencia`, `anos`, `cursos[]`, `vagas`, `contrapartida`, `urgente` — e, de forma associada (mas independente), `start/end/color` em `ganttData`. Nas views fixas: valores financeiros, breakdowns de vagas, cotas e datas nas linhas 456-751. **Campos inexistentes** hoje (não há onde gravar sem alterar código/tipos): razão social estruturada, CNPJ próprio, município/UF, endereço, tipo de instrumento, número de contrato, objeto, datas tipadas, anexos, observações, responsáveis, nº de aditivo, histórico e auditoria.
+
+##### 14. Riscos de alterar um número sem atualizar os totais relacionados
+
+1. **`conveniosData` × `ganttData`:** mudar vigência/tabela sem mover `start/end` desalinha a linha do tempo (e vice-versa) — fontes independentes.
+2. **KPIs vs divisor fixo 21:** os KPIs são automáticos, mas o donut/barras usam `21` literal (l.301-332) — incluir/remover registros quebra as proporções; além disso os segmentos (14+6+3) já somam 23/21 > 100%.
+3. **Badge "21" fixo** (l.207) e **chip "11 convênios"** (l.644) não acompanham mudanças de `conveniosData`.
+4. **Legenda do donut** (l.311-312) já divergente dos dados (11/10 vs 10/11) — alterar `cp` de um registro aprofunda a divergência.
+5. **Painéis de distribuição/cobertura** são arrays literais: mudar um convênio (ex.: novo com contrapartida, novo curso) não os atualiza (4+3+3+1 = 11 e Fisioterapia 15 vs 14 já são exemplos).
+6. **Redundância de valores:** cada R$ aparece em 2-4 lugares (tabela, view Contrapartidas, Obrigações, urgência) — ex.: R$ 4.500/vaga em l.45, 509, 650, 347; R$ 36.242,46 em l.42, 490, 494, 648, 606.
+7. **Sobreposição renovar/urgente:** alterar `status` pode inflar duplamente os KPIs 6 e 3.
+8. **Breakdowns fixos** (SES 336, Santa Joana 24, FMS 10 bolsas) têm soma conferida — alterar o total sem ajustar os componentes quebra a aritmética visível.
+
 ---
 
 ### 5.4 Módulos Futuros: Clínica-Escola & Internato
