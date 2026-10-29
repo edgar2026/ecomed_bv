@@ -29,7 +29,7 @@ const ganttData = [
   { name: 'Assoc. Evangélica Benfeit.',  sub: 'Vence 2026 — verificar',                       start: 2024,    end: 2026,    color: '#DC2626' },
   { name: 'Município de Recife',         sub: 'Em formalização · SESAU out/2024',             start: 2025,    end: 2027,    color: '#9CA3AF' },
   { name: 'FEAPAES-PE',                  sub: 'Em tramitação · nov/2025',                     start: 2025,    end: 2027,    color: '#9CA3AF' },
-  { name: 'Hapvida – Assist. Médica',    sub: 'R$ 3.000/aluno · Nov/2025–Nov/2027',           start: 2025.83, end: 2027.83, color: '#059669' },
+  { name: 'Hapvida – Assist. Médica',    sub: 'R$ 3.300/aluno · 37 vagas Med. · 2026.1–2027.1', start: 2026.0, end: 2027.5, color: '#059669' },
   { name: 'Fundação CAS – PMPE',         sub: 'Jan/2026 – Jan/2031 · 5 anos',                 start: 2026.05, end: 2031.05, color: '#059669' },
 ];
 
@@ -44,7 +44,7 @@ const conveniosData = [
   { id: 7, nome: 'Irmandade da Santa Casa de Misericórdia de PE', sub: 'R$ 1.478–1.700/vaga · Prazo iminente', status: 'urgente renovar', cp: 'cp', vigencia: 'Vence Set/2026', anos: '~3 meses restantes', cursos: [{l:'Medicina',c:'med'},{l:'Enfermagem',c:'enf'},{l:'+outros',c:''}], vagas: 'A confirmar', contrapartida: 'R$ 1.478–1.700/vaga', urgente: true },
   { id: 8, nome: 'Hospital Santa Joana', sub: 'R$ 4.500/vaga · Vence 2026', status: 'urgente renovar', cp: 'cp', vigencia: '2024 – 2026', anos: 'Meses restantes', cursos: [{l:'Medicina',c:'med'}], vagas: 'A confirmar', contrapartida: 'R$ 4.500/vaga + EAD', urgente: true },
   { id: 9, nome: 'Associação Evangélica Beneficente', sub: 'Possível vencimento em 2026 – status a confirmar', status: 'urgente', cp: 'nocp', vigencia: '2019 – 2026 (est.)', anos: 'Possível expiração', cursos: [{l:'Medicina',c:'med'}], vagas: '—', contrapartida: 'Sem contrapartida', urgente: true },
-  { id: 10, nome: 'Hapvida – Assistência Médica', sub: 'Convênio de saúde / estágio', status: 'vigente', cp: 'cp', vigencia: 'Nov/2025 – Nov/2027', anos: '2 anos', cursos: [{l:'Medicina',c:'med'},{l:'Enfermagem',c:'enf'}], vagas: 'A definir', contrapartida: 'R$ 3.000/aluno · Medicina', urgente: false },
+  { id: 10, nome: 'Hapvida – Assistência Médica', sub: 'Unidade Baixa Verde (CNPJ 63.554.067/0210-04) · Chamado 16.902.214 · Assinado Jul/2026', status: 'vigente', cp: 'cp', vigencia: '2026.1 – 2027.1 (12 meses)', anos: 'Vigente (Renovado Jul/2026)', cursos: [{l:'Medicina',c:'med'}], vagas: '37 alunos/sem.', contrapartida: 'R$ 3.300/aluno (R$ 122.100/sem.) · Cirurgia, Pediatria, Urgência', urgente: false },
   { id: 11, nome: 'APAE-SER – Associação de Pais e Amigos', sub: 'SER Educacional · Minuta vigente', status: 'vigente', cp: 'cp', vigencia: 'Nov/2025 – Nov/2027', anos: '2 anos', cursos: [{l:'Fisioterapia',c:''},{l:'T. Ocupacional',c:''},{l:'Fonoaudiologia',c:''}], vagas: 'A definir', contrapartida: 'R$ 2.000/mês + eventos', urgente: false },
   { id: 12, nome: 'Secretaria Estadual de Saúde – SES-PE', sub: '336 vagas mapeadas · Bolsas integrais a servidores', status: 'vigente', cp: 'cp', vigencia: 'Jul/2023 – Jul/2028', anos: '5 anos', cursos: [{l:'Medicina',c:'med'},{l:'Enfermagem',c:'enf'},{l:'Fisioterapia',c:''},{l:'Biomedicina',c:''},{l:'+4',c:''}], vagas: '336 vagas', contrapartida: 'Bolsas 10% / 7,5%', urgente: false },
   { id: 13, nome: 'Município de Paulista – Secretaria de Saúde', sub: 'Prefeitura Municipal de Paulista', status: 'vigente', cp: 'nocp', vigencia: '2021 – 2027 (est.)', anos: '6 anos', cursos: [{l:'Medicina',c:'med'},{l:'Enfermagem',c:'enf'}], vagas: '—', contrapartida: 'Sem contrapartida', urgente: false },
@@ -464,6 +464,22 @@ export function ConveniosModule() {
 
           <div className="cm-section-lbl">Contrapartidas Financeiras Diretas</div>
 
+          {/* Hapvida */}
+          <div className="cm-cp-strip">
+            <div className="cm-cp-strip-header">
+              <div>
+                <div className="cm-cp-strip-name">Hapvida Assistência Médica S.A. – Unidade Baixa Verde</div>
+                <div className="cm-cp-strip-name"><small>Rua da Baixa Verde, 305, Recife-PE · CNPJ Filial: 63.554.067/0210-04 (Matriz: 63.554.067/0001-98) · Chamado 16.902.214</small></div>
+              </div>
+              <div className="cm-cp-value-big">R$ 122.100,00<span>por semestre · R$ 3.300,00/aluno</span></div>
+            </div>
+            <div className="cm-cp-strip-body">
+              <div className="cm-cp-strip-fact"><div className="cm-csf-label">Vagas & Especialidades (Internato)</div><div className="cm-csf-val">37 alunos no campo de estágio · Especialidades: Cirurgia, Pediatria e Urgência/Emergência</div></div>
+              <div className="cm-cp-strip-fact"><div className="cm-csf-label">Vigência & Reajuste</div><div className="cm-csf-val"><div className="cm-status-dot-label"><span className="cm-sdot cm-sdot-green"></span>Vigente (2026.1 a 2027.1 · 12 meses) · Reajuste anual pelo IPCA · Assinado eletronicamente em 13/07/2026</div></div></div>
+              <div className="cm-cp-strip-fact"><div className="cm-csf-label">Exigências Contratuais (Anexo I)</div><div className="cm-csf-val">Apólice de seguro-aluno vigente, termos de compromisso assinados e vacinação obrigatória (dT, Tríplice Viral, Hepatite B, Varicela, Influenza e Covid-19)</div></div>
+            </div>
+          </div>
+
           {/* HCP */}
           <div className="cm-cp-strip">
             <div className="cm-cp-strip-header">
@@ -585,6 +601,7 @@ export function ConveniosModule() {
               <div className="cm-section-lbl" style={{marginTop:0}}>Vagas detalhadas por convênio</div>
               <div style={{display:'flex',flexDirection:'column',gap:'10px'}}>
                 {[
+                                    {t:'Hapvida – Assist. Médica',v:'37',vc:' vagas Med.',color:'#059669',detail:'37 alunos/semestre · R$ 3.300,00/aluno\nCirurgia · Pediatria · Urgência e Emergência\nUnidade Baixa Verde (Recife-PE)'},
                   {t:'HARF – Aeronáutica',v:'75',vc:'/semestre',color:'#0D0D0F',detail:'· 8 vagas reservadas PcD (10%)\n· 23 vagas cotas negros (30%)\n· Sem contrapartida financeira'},
                   {t:'HCP – Câncer de PE',v:'18',vc:' vagas',color:'#C8102E',detail:'R$ 36.242,46/mês · Medicina: 18 vagas × R$ 1.487,17 + Multiprofissional'},
                   {t:'Fundação CAS / FCAS',v:'186+',vc:' vagas',color:'#0D0D0F',detail:'Medicina (manutenção) + demais cursos a definir'},
@@ -627,6 +644,7 @@ export function ConveniosModule() {
                   <div className="cm-ob-card-head"><span className="cm-oname">Obrigações financeiras — convênios com contrapartida</span><span className="cm-status-chip cm-chip-warn">11 convênios</span></div>
                   <div className="cm-ob-card-body">
                     <ul className="cm-ob-list">
+                                            <li><strong>Hapvida:</strong> contrapartida de R$ 3.300,00/aluno (37 vagas = R$ 122.100,00/semestre) para Internato em Cirurgia, Pediatria e Urgência na Unidade Baixa Verde (Chamado 16.902.214)</li>
                       <li><strong>HCP:</strong> pagamento de R$ 36.242,46/mês (1º Aditivo, 18+ vagas · medicina + multiprofissional)</li>
                       <li><strong>Santa Casa:</strong> pagamento por vaga (R$ 1.478–1.700/vaga) conforme utilização</li>
                       <li><strong>Santa Joana:</strong> pagamento de R$ 4.500/vaga contratada</li>

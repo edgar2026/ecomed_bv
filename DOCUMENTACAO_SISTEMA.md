@@ -1,374 +1,274 @@
-# 📚 Documentação do Sistema — Ecossistema Integrado de Medicina
-### UNINASSAU · Holding Ser Educacional · Versão Executiva 2026
-
-> **Última atualização:** Julho/2026  
-> **Responsável técnico:** Hesdras Viana (Diretor de Unidade · UNINASSAU Boa Viagem)  
-> **Status geral do projeto:** ✅ Produção — 3 módulos ativos
-
----
-
-## 📋 Índice
-
-1. [Visão Geral do Sistema](#1-visão-geral-do-sistema)
-2. [Stack Tecnológica](#2-stack-tecnológica)
-3. [Estrutura de Arquivos](#3-estrutura-de-arquivos)
-4. [Arquitetura do Sistema](#4-arquitetura-do-sistema)
-5. [Módulos Ativos](#5-módulos-ativos)
-   - [5.1 Gestão de Preceptoria](#51-gestão-de-preceptoria)
-   - [5.2 SimulaMed](#52-simulamed)
-   - [5.3 Convênios](#53-convênios)
-6. [Tipos de Dados (TypeScript)](#6-tipos-de-dados-typescript)
-7. [Mock Data (Dados de Demonstração)](#7-mock-data-dados-de-demonstração)
-8. [Design System](#8-design-system)
-9. [Componentes da UI](#9-componentes-da-ui)
-10. [Roadmap de Expansão](#10-roadmap-de-expansão)
-11. [Sub-módulos em Desenvolvimento](#11-sub-módulos-em-desenvolvimento)
-12. [Configuração & Setup](#12-configuração--setup)
-13. [Convenções de Código](#13-convenções-de-código)
+# 📚 Dossiê de Arquitetura & Contexto — Ecossistema Integrado de Medicina
+### UNINASSAU · Holding Ser Educacional · Versão Executiva & Técnica 2026
+> **Documento Mestre para Análise de IA, Engenharia de Software e Expansão do Sistema**  
+> **Última Atualização:** 29 de Outubro de 2026  
+> **Unidade:** UNINASSAU Boa Viagem (Recife - PE)  
+> **Status Geral do Projeto:** 🚀 Em Expansão / Integração de Módulos Enterprise  
 
 ---
 
-## 1. Visão Geral do Sistema
+## 🧭 Guia Rápido para a IA que está analisando este documento
 
-O **Ecossistema Integrado de Medicina** é uma plataforma web SPA (Single Page Application) desenvolvida para a **UNINASSAU Boa Viagem** como centro unificado de operações do curso de Medicina. Ele consolida em uma única interface três grandes vertentes operacionais:
+Se você é um modelo de linguagem (LLM) ou agente autônomo analisando este repositório para nos ajudar a construir algo maior, aqui está a essência em 30 segundos:
 
-| Módulo | Descrição | Status |
-|--------|-----------|--------|
-| **Gestão de Preceptoria** | Controle total dos médicos preceptores, escalas, faturamentos, NF/RPA, chamados e saldos orçamentários | ✅ Ativo |
-| **SimulaMed** | Acompanhamento individual de alunos internos na preparação para o ENAMED — simulados, rankings, orientadores | ✅ Ativo |
-| **Convênios** | Painel institucional com todos os 21 convênios de estágio da unidade — vigências, contrapartidas, Gantt e alertas | ✅ Ativo |
-
-### Contexto Institucional
-- **Instituição:** UNINASSAU (Grupo Ser Educacional)
-- **Unidade:** Boa Viagem, Recife-PE
-- **Usuário principal:** Hesdras Viana — Diretor de Unidade
-- **Contato suporte:** contato@sereducacional.com
-- **URL de execução local:** `http://localhost:3000`
+1. **O que é este projeto (`ecomed_bv`)?**  
+   É o **Portal / Shell Central** do *Ecossistema Integrado de Medicina da UNINASSAU Boa Viagem*. Ele foi concebido em React 19 + TypeScript + Vite + Tailwind CSS v4 para unificar todas as frentes acadêmicas, clínicas e operacionais do curso de Medicina.
+2. **O que já funciona nele hoje?**  
+   - **SimulaMed:** Plataforma completa de monitoramento dos alunos do Internato para o exame ENAMED (dados reais de notas, simulados, orientadores, tutores e exportações).  
+   - **Convênios Hospitalares:** Gestão dos 21 convênios da unidade (vigências, Gantt 2023–2033, contrapartidas financeiras, divisão de vagas por curso e **contrato renovado da Hapvida com 37 alunos e R$ 122.100,00/semestre**).  
+3. **O que precisa ser integrado como módulo?**  
+   - O **Sistema de Preceptoria Real** (`D:\PROJETOS\MEDICINA\sistema-preceptoria`), que hoje é um sistema de produção à parte, maduro (v1.18), com backend **Supabase** (`tdmrscavrdoekrzdlmpf`), 27+ tabelas, 40+ RPCs no PostgreSQL, bloqueio automático de conflito de escalas, assinatura de presença móvel via link/token (`/p/:token`), conferência financeira em lote e integração de e-mails via Outlook. No `ecomed_bv`, a Preceptoria ainda é apenas uma interface com dados mockados em memória.
+4. **Qual é o objetivo maior?**  
+   Unificar a Preceptoria real, o SimulaMed, os Convênios e futuramente a **Clínica-Escola** (`D:\PROJETOS\clinica-escola`) sob uma única arquitetura modular, com autenticação centralizada (Supabase Auth/SSO Ser Educacional), controle de perfis (RBAC: Diretor, Coordenador, Preceptor, Aluno) e interface corporativa coesa.
 
 ---
 
-## 2. Stack Tecnológica
+## 📋 Índice Geral
 
-| Categoria | Tecnologia | Versão |
-|-----------|-----------|--------|
-| **Framework UI** | React | ^19.0.1 |
-| **Linguagem** | TypeScript | ~5.8.2 |
-| **Bundler** | Vite | ^6.2.3 |
-| **Estilização** | TailwindCSS v4 (via `@tailwindcss/vite`) | ^4.1.14 |
-| **Ícones** | Lucide React | ^0.546.0 |
-| **Animações** | Motion (Framer Motion fork) | ^12.23.24 |
-| **IA (integração futura)** | @google/genai | ^2.4.0 |
-| **Servidor (futuro)** | Express.js | ^4.21.2 |
-| **Env vars** | dotenv | ^17.2.3 |
-| **Fontes** | Inter, Outfit (Google Fonts) | — |
-
-### Scripts disponíveis
-
-```bash
-npm run dev       # Inicia servidor de desenvolvimento em localhost:3000
-npm run build     # Build de produção (dist/)
-npm run preview   # Prévia do build de produção
-npm run lint      # Verifica erros TypeScript (tsc --noEmit)
-npm run clean     # Remove dist/ e server.js
-```
+1. [Visão Geral & Modelo de Negócio](#1-visão-geral--modelo-de-negócio)
+2. [Inventário dos Sistemas no Workspace](#2-inventário-dos-sistemas-no-workspace)
+3. [Stack Tecnológica Completa](#3-stack-tecnológica-completa)
+4. [Arquitetura de Software & Estrutura de Pastas](#4-arquitetura-de-software--estrutura-de-pastas)
+5. [Módulos do Ecossistema](#5-módulos-do-ecossistema)
+   - [5.1 Módulo: Gestão de Preceptoria (Sistema Real Supabase)](#51-módulo-gestão-de-preceptoria-sistema-real-supabase)
+   - [5.2 Módulo: SimulaMed (Preparação ENAMED)](#52-módulo-simulamed-preparação-enamed)
+   - [5.3 Módulo: Convênios Hospitalares (com Renovação Hapvida 2026/2027)](#53-módulo-convênios-hospitalares)
+   - [5.4 Módulos Futuros: Clínica-Escola & Internato](#54-módulos-futuros-clínica-escola--internato)
+6. [Engenharia de Dados & Schemas](#6-engenharia-de-dados--schemas)
+7. [Plano de Integração Passo a Passo](#7-plano-de-integração-passo-a-passo)
+8. [Diretrizes de Implementação para a IA Parceira](#8-diretrizes-de-implementação-para-a-ia-parceira)
 
 ---
 
-## 3. Estrutura de Arquivos
+## 1. Visão Geral & Modelo de Negócio
+
+O curso de Medicina da UNINASSAU Boa Viagem possui três grandes pilares operacionais que demandam governança rigorosa:
 
 ```
-ecossistema-de-medicina/
-├── index.html                        # HTML raiz (ponto de entrada do Vite)
-├── vite.config.ts                    # Configuração do Vite + TailwindCSS + React
-├── tsconfig.json                     # Configuração TypeScript
-├── package.json                      # Dependências e scripts
-├── .env.example                      # Variáveis de ambiente (template)
-├── .gitignore
-├── README.md                         # README básico inicial
-├── DOCUMENTACAO_SISTEMA.md           # Este arquivo
+                            ┌────────────────────────────────────────┐
+                            │    ECOSSISTEMA INTEGRADO DE MEDICINA   │
+                            │       (UNINASSAU Boa Viagem / PE)      │
+                            └───────────────────┬────────────────────┘
+                                                │
+         ┌──────────────────────────────────────┼──────────────────────────────────────┐
+         ▼                                      ▼                                      ▼
+┌──────────────────┐                  ┌──────────────────┐                  ┌──────────────────┐
+│   PRECEPTORIA    │                  │    SIMULAMED     │                  │    CONVÊNIOS     │
+│   & INTERNATO    │                  │  (ENAMED 2026)   │                  │  HOSPITALARES    │
+├──────────────────┤                  ├──────────────────┤                  ├──────────────────┤
+│• 127 Preceptores │                  │• 78+ Internos    │                  │• 21 Convênios    │
+│• Escalas & Setor │                  │• 5 Simulados     │                  │• Vagas por curso │
+│• Presença Mobile │                  │• 5 Classificações│                  │• Contrapartidas  │
+│• RPA / PJ / Lotes│                  │• Mentores/Tutores│                  │• Hapvida, HARF,  │
+│• Saldo Semestral │                  │• Ação no WhatsApp│                  │  SES-PE, HCP     │
+└──────────────────┘                  └──────────────────┘                  └──────────────────┘
+```
+
+- **Pilar 1 — Preceptoria Médica:** Gestão da equipe médica que orienta alunos nos campos práticos e hospitais. Envolve montagem de escalas de rodízio, conferência de presença em tempo real pelo celular, cálculo de honorários (RPA para pessoa física e faturamento para pessoas jurídicas) e controle do saldo orçamentário semestral liberado pela diretoria.
+- **Pilar 2 — Performance Acadêmica (SimulaMed):** Acompanhamento analítico e individualizado de cada estudante do 10º e 11º períodos do Internato para maximizar a nota institucional no **ENAMED** (Exame Nacional da Medicina), categorizando alunos por proficiência e direcionando tutorias.
+- **Pilar 3 — Relações Institucionais (Convênios):** Monitoramento dos 21 convênios firmados com hospitais públicos, filantrópicos e privados (ex: Hapvida, Força Aérea Brasileira - HARF, Secretaria Estadual de Saúde - SES-PE, Hospital de Câncer de Pernambuco - HCP), controlando prazos de vigência, contrapartidas em dinheiro/bolsas e garantia de vagas.
+
+---
+
+## 2. Inventário dos Sistemas no Workspace
+
+Os seguintes repositórios e ativos compõem a infraestrutura do ecossistema:
+
+### Ativo A: `d:\PROJETOS\ecomed_bv` (O Portal Central)
+- **Papel:** Host do Ecossistema, Single Page Application.
+- **Stack:** React 19, TypeScript, Vite, Tailwind CSS v4, Lucide React, Motion.
+- **Estado atual:** Contém layout definitivo (Sidebar UNINASSAU, Header com notificações e busca global), módulo SimulaMed completo com dados de alunos e módulo de Convênios completo. A Preceptoria atual é mockada.
+
+### Ativo B: `D:\PROJETOS\MEDICINA\sistema-preceptoria` (O Sistema de Preceptoria de Produção)
+- **Papel:** Sistema oficial de Gestão de Preceptoria da UNINASSAU Medicina (versão 1.18, Outubro/2026).
+- **Stack:** React, JavaScript (.jsx), Vite, CSS puro (`styles.css` 215KB), `@supabase/supabase-js`, `jspdf`, `jspdf-autotable`.
+- **Backend:** Supabase PostgreSQL (`https://tdmrscavrdoekrzdlmpf.supabase.co`).
+  - 27+ tabelas de banco de dados.
+  - 40+ RPCs (Remote Procedure Calls) nativas em PostgreSQL para cálculos de impostos, lote de pagamentos e validação de conflitos.
+  - 61 migrações versionadas.
+  - Row Level Security (RLS) e Edge Functions ativas.
+  - Rota Mobile `/p/:token`: página pública ultraleve para médicos registrarem presença sem precisar baixar aplicativo ou fazer login.
+  - Arquivo mestre de serviços: `src/services/queries.js` (~1.800 linhas de funções Supabase).
+
+### Ativo C: `D:\PROJETOS\clinica-escola` (Clínica-Escola de Saúde)
+- **Papel:** Sistema de atendimento ao paciente, agendamento de consultas, especialidades e prontuário integrado para estudantes de saúde.
+- **Stack:** React, TypeScript, Supabase, Tailwind.
+
+### Ativo D: Mapeamento de Bancos de Dados Supabase (`D:\PROJETOS\bancos-supabase.txt`)
+- O grupo utiliza projetos dedicados no Supabase gerenciados pelas contas de TI da instituição, permitindo integração via REST API e MCP Supabase.
+
+---
+
+## 3. Stack Tecnológica Completa
+
+| Categoria | Tecnologia | Versão | Função no Ecossistema |
+| :--- | :--- | :--- | :--- |
+| **Framework UI** | React | `^19.0.1` | Renderização reativa de alto desempenho |
+| **Linguagem Principal** | TypeScript | `~5.8.2` | Segurança de tipos no Core e módulos modernos |
+| **Compilação Híbrida** | TypeScript (`allowJs: true`) | — | Permite importar módulos legados em `.jsx` sem reescrita forçada |
+| **Bundler & DevServer**| Vite | `^6.2.3` | Hot Module Replacement veloz e build otimizado |
+| **Estilização Global** | Tailwind CSS v4 | `^4.1.14` | Variáveis temáticas via `@tailwindcss/vite` |
+| **Estilização Legada** | CSS Escopado (`.preceptoria-root`) | — | Isola os estilos do sistema de preceptoria |
+| **Ícones** | Lucide React | `^0.546.0` | Iconografia institucional uniforme |
+| **Animações** | Motion (Framer Motion) | `^12.23.24` | Transições suaves de abas e modais |
+| **Backend & Banco** | Supabase (PostgreSQL 15+) | Cloud | Banco relacional, Auth JWT, Edge Functions, RPCs e Storage |
+| **SDK Supabase** | `@supabase/supabase-js` | `^2.49.0` | Cliente oficial para chamadas de RPCs e tabelas |
+| **Relatórios / PDF** | `jspdf` + `jspdf-autotable` | `^4.2.1` | Geração client-side de espelhos de escala e pagamentos |
+| **Manipulação Excel** | `xlsx` | `^0.18.5` | Exportação de tabelas e relatórios para coordenadores |
+| **Inteligência Artificial**| `@google/genai` | `^2.4.0` | Suporte futuro a assistentes clínicos e triagem acadêmica |
+
+---
+
+## 4. Arquitetura de Software & Estrutura de Pastas
+
+Para receber múltiplos sistemas sem conflitos de variáveis globais, escopos de CSS ou quebras de build, a arquitetura-alvo adotada é a **Modular Nativa por Domínio (Feature-Driven Architecture)**:
+
+```text
+d:\PROJETOS\ecomed_bv\
+├── index.html                        # Ponto de entrada do SPA
+├── vite.config.ts                    # Configuração Vite + Tailwind v4 + React
+├── tsconfig.json                     # TypeScript com "allowJs": true
+├── package.json                      # Dependências globais unificadas
+├── .env                              # VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY
 │
-├── assets/                           # Assets estáticos
-│   ├── uninassau_logo_white.png      # Logo branca para sidebar
-│   └── uninassau_favicon.png         # Ícone da aba do navegador
-│
-├── public/                           # Arquivos públicos (copiados para dist/)
-│   └── uninassau_logo_white.png      # Referenciado no Sidebar como /uninassau_logo_white.png
-│
-├── convenios_uninassau_minimal.html  # Versão standalone HTML do módulo Convênios
-│                                     # (arquivo legado/referência visual)
+├── public/                           # Logos brancas, favicons e manifest
+│   └── uninassau_logo_white.png
 │
 └── src/
-    ├── main.tsx                      # Ponto de entrada React (ReactDOM.createRoot)
-    ├── App.tsx                       # Componente raiz — gerencia estado global + roteamento
-    ├── types.ts                      # Todos os tipos TypeScript do domínio
-    ├── data.ts                       # Mock data inicial para todos os módulos
-    ├── index.css                     # Design system (tema Tailwind + variáveis CSS)
+    ├── main.tsx                      # ReactDOM bootstrap
+    ├── App.tsx                       # Roteador Master (chaveia módulos e rota mobile)
+    ├── index.css                     # Tailwind v4 tema institucional
+    ├── types.ts                      # Interfaces TypeScript compartilhadas
     │
-    ├── components/                   # Componentes de página e UI
-    │   ├── Header.tsx                # Header fixo com breadcrumb, busca e perfil
-    │   ├── Sidebar.tsx               # Sidebar fixa com navegação principal
-    │   ├── HomeModule.tsx            # Tela inicial / dashboard geral
-    │   ├── EmDesenvolvimento.tsx     # Card de "Módulo em Desenvolvimento" (placeholder)
-    │   │
-    │   ├── PreceptoresModule.tsx     # Router do módulo Preceptoria (8 sub-páginas)
-    │   ├── PreceptoresDashboard.tsx  # Dashboard analítico de Preceptoria (sub-página 1)
-    │   ├── EscalasModule.tsx         # Gestão de escalas (sub-componente de Preceptoria)
-    │   ├── HospitaisModule.tsx       # Gestão de hospitais (sub-componente, não roteado)
-    │   ├── DisciplinasModule.tsx     # Gestão de disciplinas (sub-componente, não roteado)
-    │   ├── PagamentosModule.tsx      # Faturamentos/pagamentos (sub-componente)
-    │   ├── SolicitacoesModule.tsx    # NF/RPA solicitações (sub-componente)
-    │   ├── ChamadosSaldoModule.tsx   # Chamados orçamentários (sub-componente)
-    │   ├── ControleSaldosModule.tsx  # Controle de saldos (sub-componente)
-    │   │
-    │   ├── SimulaMedModule.tsx       # Módulo SimulaMed completo (dashboard único)
-    │   └── ConveniosModule.tsx       # Módulo Convênios completo (dashboard único)
+    ├── core/                         # Núcleo da plataforma
+    │   ├── auth/                     # Autenticação Supabase, contexto do usuário e RBAC
+    │   ├── components/
+    │   │   ├── Header.tsx            # Cabeçalho com breadcrumb, busca global e perfil
+    │   │   ├── Sidebar.tsx           # Menu unificado com permissões de acesso
+    │   │   └── EmDesenvolvimento.tsx # Placeholder padronizado para expansões
+    │   └── services/                 # Instância Supabase Singleton
     │
-    └── data/
-        ├── preceptoriaData.ts        # Dados financeiros de internato e práticas (2026)
-        └── simulamedData.ts          # Dados de alunos do ENAMED (CSV inline parseado)
+    └── modules/                      # Módulos Funcionais Autônomos
+        │
+        ├── preceptoria/              # Módulo Real de Preceptoria (Migrado de MEDICINA)
+        │   ├── PreceptoriaModule.tsx # Invólucro com layout do ecossistema
+        │   ├── PreceptoriaApp.jsx    # Componente administrativo completo (7.6k linhas)
+        │   ├── mobile/
+        │   │   └── RegistroPresencaToken.jsx # Rota /p/:token sem menu, mobile-first
+        │   ├── services/
+        │   │   ├── supabase.js       # Client configurado com import.meta.env
+        │   │   ├── queries.js        # ~1.800 linhas de RPCs e queries de produção
+        │   │   └── xlsx.js           # Funções de exportação analítica
+        │   └── styles/
+        │       └── preceptoria.css   # 215KB escopados sob .preceptoria-module-root
+        │
+        ├── simulamed/                # Módulo ENAMED
+        │   ├── SimulaMedModule.tsx   # Dashboard analítico de notas e alunos
+        │   └── simulamedData.ts      # Dataset de estudantes, tutores e classificações
+        │
+        ├── convenios/                # Módulo de Convênios
+        │   └── ConveniosModule.tsx   # Painel com Gantt, 21 convênios e contrato Hapvida
+        │
+        └── clinica-escola/           # (Preparado para incorporar D:\PROJETOS\clinica-escola)
 ```
 
 ---
 
-## 4. Arquitetura do Sistema
+## 5. Módulos do Ecossistema
 
-### Padrão de Roteamento
+### 5.1 Módulo: Gestão de Preceptoria (Sistema Real Supabase)
 
-O sistema utiliza roteamento **client-side por estado React** — não usa `react-router-dom`. A navegação é controlada por dois estados globais em `App.tsx`:
+O módulo de preceptoria controla todo o ciclo de vida dos médicos preceptores nos hospitais parceiros.
+
+#### Principais Funcionalidades de Produção:
+1. **Cadastro de Preceptores e Vínculos:**
+   - 127 preceptores ativos e 45 vínculos de internato registrados.
+   - Suporte a múltiplos vínculos por médico (ex: atua em Pediatria no Hospital A e em Cirurgia no Hospital B).
+   - Suporte a múltiplos e-mails de notificação por preceptor (`preceptor_emails_copia`).
+   - Identificação fiscal flexível: CPF (com validação formatada) ou CNPJ de empresa médica (PJ).
+2. **Motor de Escalas e Bloqueio de Conflito:**
+   - Seleção de setor hospitalar por item da escala (sem amarrar o preceptor a um único setor fixo).
+   - Validação transacional de conflitos via RPC: impede que um preceptor seja escalado em horários coincidentes no mesmo dia em hospitais diferentes.
+3. **Registro de Presença Mobile (`/p/:token`):**
+   - Cada escala gera um token seguro de presença.
+   - O médico acessa no celular pelo navegador sem login, assina e envia confirmação com geolocalização e data/hora oficial.
+   - Possui também tela de conferência para coordenadores aprovarem presenças manuais com justificativa.
+4. **Ciclo Financeiro & Pagamento em Lote:**
+   - Cálculo automático de turnos × valor da hora/vínculo.
+   - Dedução de faltas não justificadas.
+   - Fluxo simplificado de status: `Calculado` → `Conferido` → `E-mail Preparado` → `Não Pago` → `Pago`.
+   - **Geração de Lote de Pagamento:** Confirmação em massa de pagamentos de dezenas de preceptores via RPCs `previa_pagamento_lote` e `executar_pagamento_lote`.
+   - **Disparo de E-mails com Deep Link Outlook:** Gera link formatado para envio direto via Outlook Web preenchendo destinatário, assunto, corpo oficial com espelho de cálculo e cópias (Cc).
+5. **Acompanhamento de Saldo Semestral:**
+   - Visualização gráfica de ranking de vínculos que mais consom a verba semestral da unidade.
+   - Alertas visuais para vínculos acima de 80% do saldo utilizado e saldo esgotado.
+   - Exportação completa de relatórios em Excel (`.xlsx`) e PDF executivo.
+
+---
+
+### 5.2 Módulo: SimulaMed (Preparação ENAMED)
+
+O SimulaMed é a ferramenta estratégica da direção para garantir a aprovação dos alunos no Exame Nacional de Medicina (ENAMED).
+
+#### Regras e Métricas:
+- **Público:** 78+ alunos matriculados no 10º e 11º períodos (Internato).
+- **Classificação em 5 Faixas de Proficiência:**
+  - 🟢 **Proficiente** (Desempenho excelente)
+  - 🔵 **Semi Proficiente** (Desempenho regular/estável)
+  - 🟡 **Não Proficiente +** (Atenção moderada)
+  - 🟠 **Não Proficiente -** (Risco acadêmico)
+  - 🔴 **Alerta Máximo** (Intervenção pedagógica urgente da diretoria)
+- **Painel de Ações Rápidas:**
+  - Botão de contato direto via WhatsApp institucional da diretoria com mensagem pré-formatada personalizada com nome do aluno e notas.
+  - Alocação de professores orientadores/tutores individuais.
+  - Filtros cruzados por simulado (Simulado 1 ao Simulado 5), período e presença em sala.
+  - Exportação de listas completas em CSV e modo de impressão formatado.
+
+---
+
+### 5.3 Módulo: Convênios Hospitalares
+
+O módulo de convênios gerencia todos os acordos jurídicos e financeiros da UNINASSAU Boa Viagem com hospitais e redes de saúde.
+
+#### O Novo Contrato HAPVIDA (Atualizado em Julho/2026):
+O contrato foi renovado e homologado formalmente em **13/07/2026** (Chamado nº `16.902.214`, assinado via D4Sign / Autentique por Dr. Adriano Lisboa, Dr. Janyo Janguiê Diniz e diretoria do Hapvida). Seus dados no sistema refletem as condições exatas:
+
+| Cláusula Contratual | Dado Oficial Homologado |
+| :--- | :--- |
+| **Concedente / Conveniada** | HAPVIDA ASSISTÊNCIA MÉDICA S.A. (Matriz: CNPJ `63.554.067/0001-98`) |
+| **Unidade de Estágio** | Rua da Baixa Verde, 305, Recife - PE, CEP 52010-250 (CNPJ Filial `63.554.067/0210-04`) |
+| **IES Contratante** | SER EDUCACIONAL S.A. / UNINASSAU RECIFE - BOA VIAGEM (CNPJ `04.986.320/0019-42`) |
+| **Especialidades do Internato** | **Cirurgia, Pediatria, Urgência e Emergência** |
+| **Capacidade de Vagas** | **37 alunos / semestre** no campo de estágio de internato |
+| **Contrapartida por Aluno** | **R$ 3.300,00** (três mil e trezentos reais) por aluno |
+| **Valor Total por Semestre** | **R$ 122.100,00** (Cento e vinte e dois mil e cem reais) |
+| **Vigência** | **2026.1 a 2027.1 (12 meses)**, renovável por termo aditivo |
+| **Reajuste Monetário** | Reajuste anual pelo **IPCA** no aniversário do contrato |
+| **Exigências Sanitárias** | Carteira de vacinação obrigatória (dT, Tríplice Viral, Hep B, Varicela, Influenza e Covid-19), termo de compromisso assinado e seguro-aluno com apólice vigente |
+
+#### Outros Destaques dos 21 Convênios:
+- **HARF (Hospital de Aeronáutica de Recife):** Edital 01/2025 (12/06/2026 a 12/06/2028), 75 vagas/semestre sem contrapartida financeira, com cotas legais (10% PcD e 30% negros/pardos).
+- **HCP (Hospital de Câncer de Pernambuco):** R$ 36.242,46/mês (18 vagas medicina + equipe multiprofissional).
+- **SES-PE:** 336 vagas em 9 cursos com contrapartida de bolsas de estudo aos servidores estaduais (10% Medicina / 7,5% demais).
+- **Fundação CAS / PMPE:** 186+ vagas com desconto institucional de 60% nas mensalidades para dependentes da Polícia Militar.
+
+---
+
+### 5.4 Módulos Futuros: Clínica-Escola & Internato
+
+1. **Clínica-Escola (`D:\PROJETOS\clinica-escola`):** Sistema com agendamento de consultas da comunidade, prontuários eletrônicos de pacientes, triagem multiprofissional e validação de relatórios clínicos pelos preceptores.
+2. **Internato & Rodízios Médicos:** Gestão centralizada do ciclo de rotação dos alunos pelos 5 grandes eixos do internato (Clínica Médica, Cirurgia, Ginecologia e Obstetrícia, Pediatria e Saúde Coletiva).
+
+---
+
+## 6. Engenharia de Dados & Schemas
+
+### 6.1 Tipos Principais no Frontend (`src/types.ts`)
 
 ```typescript
-const [activeModule, setActiveModule] = useState<ModuleId>('home');
-const [activeSubPage, setActiveSubPage] = useState<string>('dashboard');
-```
+export type ModuleId = 'home' | 'preceptores' | 'simulamed' | 'convenios';
 
-#### Fluxo de Navegação
-
-```
-Sidebar (click no módulo)
-  └─> setActiveModule('preceptores')
-      └─> setActiveSubPage('dashboard')
-          └─> App.tsx renderiza <PreceptoresModule>
-              └─> PreceptoresModule renderiza sub-páginas por activeTab
-```
-
-### Módulos disponíveis (`ModuleId`)
-
-```typescript
-type ModuleId = 'home' | 'preceptores' | 'simulamed' | 'convenios';
-```
-
-### Gerenciamento de Estado
-
-Todo o estado é gerenciado em `App.tsx` com `useState` e repassado via **props drilling** para os módulos filhos. Não há uso de Context API, Redux ou Zustand nesta versão.
-
-**Estados globais em `App.tsx`:**
-
-| Estado | Tipo | Descrição |
-|--------|------|-----------|
-| `activeModule` | `ModuleId` | Módulo ativo na navegação |
-| `activeSubPage` | `string` | Sub-página ativa dentro do módulo |
-| `searchTerm` | `string` | Termo de busca global |
-| `preceptors` | `Preceptor[]` | Lista de preceptores |
-| `hospitals` | `Hospital[]` | Lista de hospitais |
-| `campos` | `CampoEstagio[]` | Campos de estágio |
-| `disciplines` | `Disciplina[]` | Disciplinas |
-| `scales` | `Escala[]` | Escalas de preceptoria |
-| `financialRecords` | `FinanceiroRecord[]` | Registros financeiros |
-| `solicitacoes` | `Solicitacao[]` | Solicitações NF/RPA |
-| `payments` | `Pagamento[]` | Pagamentos |
-| `chamados` | `ChamadoSaldo[]` | Chamados de saldo |
-| `saldos` | `ControleSaldo[]` | Controle de saldos |
-| `isNewScaleOpen` | `boolean` | Modal de nova escala |
-
----
-
-## 5. Módulos Ativos
-
-### 5.1 Gestão de Preceptoria
-
-**Componente principal:** [`PreceptoresModule.tsx`](file:///d:/PROJETOS/ecossistema-de-medicina/src/components/PreceptoresModule.tsx)  
-**Dashboard analítico:** [`PreceptoresDashboard.tsx`](file:///d:/PROJETOS/ecossistema-de-medicina/src/components/PreceptoresDashboard.tsx)
-
-#### Sub-páginas do Módulo de Preceptoria
-
-O módulo tem 8 sub-páginas, roteadas internamente por `activeTab`:
-
-| ID | Label | Componente | Status |
-|----|-------|-----------|--------|
-| `dashboard` | Dashboard | `PreceptoresDashboard` | ✅ Ativo |
-| `lista` | Cadastro & Lista | `EmDesenvolvimento` | 🔒 Q3/2026 |
-| `escalas` | Escalas | `EmDesenvolvimento` | 🔒 Q3/2026 |
-| `pagamentos` | Pagamentos | `EmDesenvolvimento` | 🔒 Q4/2026 |
-| `nf_rpa` | NF / RPA | `EmDesenvolvimento` | 🔒 Q4/2026 |
-| `processos` | Processos & Chamados | `EmDesenvolvimento` | 🔒 Q1/2027 |
-| `saldos` | Controle de Saldos | `EmDesenvolvimento` | 🔒 Q1/2027 |
-| `relatorios` | Relatórios | `EmDesenvolvimento` | 🔒 Q2/2027 |
-
-> **Nota:** A Sidebar atual exibe apenas o módulo pai sem sub-menus. As sub-páginas são acessadas via tabs internas dentro do `PreceptoresModule`. A estrutura de sub-páginas está preservada em `MODULES` no `Sidebar.tsx` para ativação futura.
-
-#### Dashboard de Preceptoria (`PreceptoresDashboard`)
-
-O dashboard é o componente mais complexo do sistema (**1491 linhas**, **82KB**). Possui 6 abas analíticas:
-
-| Aba | ID | Descrição |
-|-----|----|-----------|
-| Visão Geral | `geral` | KPIs gerais de custo total, breakdown internato vs práticas |
-| Por Período | `periodos` | Análise financeira por período acadêmico |
-| Atividades Práticas | `praticas` | Tabela detalhada com busca e filtros das práticas |
-| Internato | `internato` | Tabela de valores do internato por disciplina e mês |
-| Comparativo | `comparativo` | Comparação mensal entre internato e práticas |
-| Qualidade | `qualidade` | Indicadores de conformidade e satisfação |
-
-**Dados utilizados:** [`src/data/preceptoriaData.ts`](file:///d:/PROJETOS/ecossistema-de-medicina/src/data/preceptoriaData.ts)
-- Meses cobertos: **Fevereiro a Julho de 2026**
-- Estruturas: `internato[]` e `praticas[]` (arrays de `PreceptoriaRecord`)
-- `textCells[]` para registros de status textual (ex.: "NÃO PAGA")
-
-**KPIs computados dinamicamente:**
-- Total geral de custos (Internato + Práticas)
-- Total por mês
-- % de participação por disciplina
-- Taxas de conformidade e pagamento
-
-#### Modal Global de Nova Escala
-
-Existe um modal flutuante em `App.tsx` (`isNewScaleOpen`) para criação rápida de escalas, com:
-- Seleção de Preceptor, Hospital, Campo de Estágio, Disciplina
-- Data, Hora de início e Hora de fim
-- Ao salvar, redireciona para `preceptores > escalas`
-
----
-
-### 5.2 SimulaMed
-
-**Componente:** [`SimulaMedModule.tsx`](file:///d:/PROJETOS/ecossistema-de-medicina/src/components/SimulaMedModule.tsx)  
-**Dados:** [`src/data/simulamedData.ts`](file:///d:/PROJETOS/ecossistema-de-medicina/src/data/simulamedData.ts)
-
-#### Funcionalidades
-
-O módulo exibe um dashboard único (sub-navegação travada em `dashboard`). Contém:
-
-1. **Tabela paginada de alunos** — 10 por página, com sort por nome, média ou período
-2. **Filtros dinâmicos** — Período, Categoria de desempenho, Orientador
-3. **Busca full-text** — por nome do aluno
-4. **KPIs de cabeçalho** — Total de alunos, média geral, proficientes, alertas
-5. **Modal de detalhes do aluno** — histórico de simulados, contato, orientador, plataforma, feedback
-
-#### Estrutura de dados do aluno (`AlunoSimulaMed`)
-
-```typescript
-interface AlunoSimulaMed {
-  nome: string;
-  periodo: string;       // "10º" ou "11º"
-  s1: string;            // Nota Simulado 1
-  s2: string;            // Nota Simulado 2
-  s3: string;            // Nota Simulado 3
-  rep: string;           // Nota de reposição
-  s4: string;            // Nota Simulado 4
-  media: number | null;  // Média calculada
-  categoria: string;     // "Proficiente", "Semi Proficiente", "Não Proficiente +/−", "Alerta Máximo", etc.
-  telefone: string;
-  orientador: string;
-  plataforma: string;    // "MEDCOF", "PAPO DE RESIDÊNCIA", "EU MÉDICO RESIDENTE", etc.
-  contato: string;       // "SIM" / "NÃO" / vazio
-  feedback: string;      // Observações do orientador
-}
-```
-
-#### Categorias de desempenho
-
-| Categoria | Significado |
-|-----------|------------|
-| `Proficiente` | Média ≥ 65 |
-| `Semi Proficiente` | Média ~58–64 |
-| `Não Proficiente +` | Média ~53–57 |
-| `Não Proficiente -` | Média ~48–52 |
-| `Alerta Máximo` | Média < 48 |
-| `Sem possibilidade de acompanhamento` | Não realizou simulados |
-
-#### Orientadores cadastrados
-
-- Pablo Gualberto
-- Lívia Bandeira
-- Heytor Neco
-- Maria da Conceição
-- Fábio Fidelis
-- Karla Melo
-- Andréa Apolinário / Andréa Gomes
-- Jorge Luiz
-
----
-
-### 5.3 Convênios
-
-**Componente:** [`ConveniosModule.tsx`](file:///d:/PROJETOS/ecossistema-de-medicina/src/components/ConveniosModule.tsx)  
-**Linhas:** 944 | **Tamanho:** ~71KB
-
-#### Funcionalidades
-
-O módulo tem **6 abas internas** (roteamento por tabs dentro do componente):
-
-| Aba | ID | Descrição |
-|-----|----|-----------|
-| Dashboard | `dashboard` | Resumo geral com KPIs e ações urgentes |
-| Todos Convênios | `todos` | Tabela completa dos 21 convênios com filtros |
-| Contrapartidas | `contrapartidas` | Detalhamento financeiro das contrapartidas |
-| Cursos & Vagas | `cursos` | Distribuição de vagas por curso |
-| Obrigações | `obrigacoes` | Controle de obrigações e vencimentos |
-| Destaque: HARF | `harf` | Aba especial para o Hospital de Aeronáutica de Recife |
-
-#### Dados dos 21 Convênios
-
-Os 21 convênios estão embutidos diretamente no componente como constante `conveniosData[]`. Situação atual:
-
-**✅ Vigentes (ativos):**
-- HARF – Hospital de Aeronáutica de Recife (Jun/2026–Jun/2028)
-- Fundação CAS – PMPE (Jan/2026–Jan/2031)
-- Fundo Municipal de Saúde – São Lourenço (Dez/2025–Dez/2030)
-- IASSEPE / HSE (Set/2025–Set/2029)
-- APAE-SER (Nov/2025–Nov/2027)
-- SES-PE (Jul/2023–Jul/2028)
-- Município de Paulista, Camaragibe, Jaboatão, Olinda (2021–2027)
-- HMG e HMJ – Hospitais Maternidade (desde 2016)
-- Hospital Memorial do Agreste – Caruaru (2023–2033)
-- Fundação Altino Ventura (2025–2027)
-- Hapvida (Nov/2025–Nov/2027)
-
-**🔴 URGENTE – Vence em 2026:**
-- Irmandade da Santa Casa de Misericórdia (~3 meses restantes)
-- Hospital Santa Joana (2026)
-- Associação Evangélica Beneficente (2026)
-- HCP – Hospital de Câncer de PE (21/05/2026 – em 2ª renovação)
-
-**🟡 Em Renovação / Formalização:**
-- Prefeitura de São Lourenço da Mata (vencido Fev/2025)
-- Município de Recife (em formalização, SESAU out/2024)
-- FEAPAES-PE (em tramitação)
-
-#### Gantt de Vigências
-
-O componente `GanttChart` (embutido no `ConveniosModule`) exibe visualmente os 21 convênios em linha do tempo de 2023 a 2030+. Cada barra tem cor conforme status:
-
-| Cor | Significado |
-|-----|------------|
-| `#059669` (verde) | Vigente, sem urgência |
-| `#2563EB` (azul) | Vigente com contrapartida financeira |
-| `#F59E0B` (âmbar) | Renovação em andamento |
-| `#DC2626` (vermelho) | Urgente — vence em breve |
-| `#9CA3AF` (cinza) | Em tramitação / não formalizado |
-
----
-
-## 6. Tipos de Dados (TypeScript)
-
-Todos os tipos estão em [`src/types.ts`](file:///d:/PROJETOS/ecossistema-de-medicina/src/types.ts):
-
-```typescript
-// Identificador dos módulos
-type ModuleId = 'home' | 'preceptores' | 'simulamed' | 'convenios';
-
-// Preceptor de Medicina
-interface Preceptor {
+export interface Preceptor {
   id: string;
   nome: string;
   crm: string;
@@ -381,386 +281,102 @@ interface Preceptor {
   camposVinculados: string[];
   valorHora: number;
   dataAdmissao: string;
-  documentos: { nome: string; status: 'Validado' | 'Pendente' | 'Vencido'; dataEnvio: string }[];
-  escalas: { data: string; horaInicio: string; horaFim: string; local: string }[];
-  pagamentos: { mes: string; valor: number; status: 'Pago' | 'Pendente' | 'Processando' }[];
-  solicitacoes: { id: string; tipo: string; valor: number; data: string; status: string }[];
-  historico: { data: string; acao: string; usuario: string }[];
 }
 
-// Hospital parceiro
-interface Hospital {
+export interface Escala {
   id: string;
-  nome: string;
-  cidade: string;
-  capacidadeAlunos: number;
-  ocupacaoAtual: number;
-  status: 'Ativo' | 'Revisão' | 'Inativo';
-  especialidades: string[];
-  camposEstagio: string[];
-  preceptoresAlocados: string[];
-  disciplinasOferecidas: string[];
-  contratoNumero: string;
-  contratoVencimento: string;
-  valorMensal: number;
-  convenioStatus: 'Vigente' | 'Expirado' | 'Em Renovação';
-  indicadores: { conformidade: number; avaliacaoAlunos: number; instalacoes: number };
+  preceptorId: string;
+  preceptorNome: string;
+  hospitalId: string;
+  hospitalNome: string;
+  disciplinaId: string;
+  disciplinaNome: string;
+  campoId: string;
+  campoNome: string;
+  data: string;
+  horaInicio: string;
+  horaFim: string;
+  status: 'Pendente' | 'Confirmada' | 'Cancelada';
 }
 
-// Outros tipos: CampoEstagio, Disciplina, Escala, FinanceiroRecord, Solicitacao,
-//               Pagamento, ChamadoSaldo, ControleSaldo
-// → Ver src/types.ts para detalhes completos
+export interface ConvenioData {
+  id: number;
+  nome: string;
+  sub: string;
+  status: 'vigente' | 'renovar' | 'urgente';
+  cp: 'cp' | 'nocp';
+  vigencia: string;
+  anos: string;
+  cursos: { l: string; c: string }[];
+  vagas: string;
+  contrapartida: string;
+  urgente: boolean;
+}
+```
+
+### 6.2 Principais Tabelas do Supabase (`tdmrscavrdoekrzdlmpf`)
+
+| Tabela | Função / Conteúdo |
+| :--- | :--- |
+| `preceptores` | Registro do médico preceptor (nome, CRM, telefone, e-mail, tipo_chave_pix, chave_pix, dados PJ) |
+| `preceptor_emails_copia` | E-mails adicionais de cópia (Cc) para cada preceptor |
+| `vinculos_internato` | Vínculos de cada preceptor com hospitais, disciplinas, saldo semestral e valor da hora |
+| `escalas` | Cabeçalho das escalas periódicas |
+| `escalas_itens` | Turnos específicos da escala (data, horário, turno, preceptor_id, setor_id) |
+| `setores` | Setores e alas hospitalares credenciadas |
+| `presencas` | Registro de presença com data/hora, geolocalização e método (token mobile vs coordenador) |
+| `calculos_financeiros` | Fila financeira com cálculos por competência, deduções, status e valores liquidados |
+| `pagamentos_lote` | Histórico dos lotes de pagamento aprovados |
+| `audit_logs` | Trilha de auditoria completa de todas as inserções, alterações e exclusões |
+
+---
+
+## 7. Plano de Integração Passo a Passo
+
+O roteiro oficial para unificar o sistema sem quebras está estruturado em 5 fases:
+
+```
+FASE 1: INFRAESTRUTURA
+  ├── Instalar @supabase/supabase-js, jspdf, jspdf-autotable
+  ├── Configurar tsconfig.json com "allowJs": true
+  └── Configurar .env com URL e Chave Anon do Supabase
+
+FASE 2: MIGRAÇÃO DOS SERVIÇOS & TELAS
+  ├── Criar src/modules/preceptoria/
+  ├── Copiar queries.js, xlsx.js e supabase.js
+  ├── Copiar RegistroPresencaToken.jsx para rota mobile
+  └── Encapsular styles.css (215KB) sob .preceptoria-module-root
+
+FASE 3: ROTEAMENTO MESTRE & ACESSO MOBILE
+  ├── Tratar rota /p/:token no App.tsx para renderizar tela cheia sem Sidebar
+  └── Carregar PreceptoriaModule dentro da área principal para rotas administrativas
+
+FASE 4: CENTRALIZAÇÃO DA NAVEGAÇÃO & PERMISSÕES
+  ├── Conectar Sidebar.tsx com sub-menus reais de Preceptoria
+  └── Configurar controle de papéis (Admin, Coordenador, Visualizador)
+
+FASE 5: HOMOLOGAÇÃO & DEPLOY
+  ├── npm run lint & npm run build
+  └── Validação ponta a ponta: presença móvel, bloqueio de conflitos e pagamento em lote
 ```
 
 ---
 
-## 7. Mock Data (Dados de Demonstração)
+## 8. Diretrizes de Implementação para a IA Parceira
 
-### `src/data.ts` — Dados iniciais dos estados globais
+Ao trabalhar neste código, qualquer IA ou desenvolvedor deve seguir rigorosamente os princípios abaixo:
 
-Exporta 10 arrays de dados mockados:
-
-| Exportação | Tipo | Qtd. registros |
-|-----------|------|----------------|
-| `preceptoresInicial` | `Preceptor[]` | ~5 preceptores |
-| `hospitaisInicial` | `Hospital[]` | ~4 hospitais |
-| `camposInicial` | `CampoEstagio[]` | ~4 campos |
-| `disciplinasInicial` | `Disciplina[]` | ~5 disciplinas |
-| `escalasInicial` | `Escala[]` | ~5 escalas |
-| `financeiroInicial` | `FinanceiroRecord[]` | ~5 registros |
-| `solicitacoesInicial` | `Solicitacao[]` | ~3 solicitações |
-| `pagamentosInicial` | `Pagamento[]` | ~4 pagamentos |
-| `chamadosInicial` | `ChamadoSaldo[]` | ~3 chamados |
-| `saldosInicial` | `ControleSaldo[]` | ~3 saldos |
-
-**Preceptores de exemplo:**
-- `PR001` — Dr. Roberto Almeida (Cirurgia Geral · R$120/h · Hospital Esperança · Ativo)
-- `PR002` — Dra. Camila Moraes (Clínica Médica · R$110/h · Real Hospital Português · Pendente)
-
-### `src/data/preceptoriaData.ts` — Financeiro de Preceptoria 2026
-
-Dados reais financeiros de Fev–Jul 2026:
-
-```typescript
-export const months = ["FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO"];
-export const monthsP = ["FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO"]; // práticas (5 meses)
-
-// Arrays principais:
-export const internato: PreceptoriaRecord[];  // Disciplinas do internato
-export const praticas: PreceptoriaRecord[];   // Atividades práticas
-export const textCells: TextCellRecord[];     // Células com status textual
-```
-
-### `src/data/simulamedData.ts` — Alunos SimulaMed
-
-Dados dos alunos em formato **CSV inline** parseado em runtime pela função `getAlunosSimulaMed()`. Contém aproximadamente **100 alunos** dos períodos 10º e 11º com notas dos simulados S1, S2, S3, S4 e média.
+1. **Preservar a integridade das 40 RPCs do Supabase:**  
+   As RPCs em PostgreSQL (`tdmrscavrdoekrzdlmpf`) controlam regras financeiras críticas, lotes de pagamento e bloqueios de escala. **Não altere nomes de parâmetros nem assinaturas de funções no backend sem consultar o changelog oficial.**
+2. **Isolamento de Estilos:**  
+   O `ecomed_bv` utiliza **Tailwind CSS v4**. O sistema de preceptoria original possui um `styles.css` de 215KB. Jamais importe o `styles.css` de forma global no `main.tsx`, pois ele sobrescreverá resets de fonte e botões do Tailwind. Sempre mantenha-o contido dentro do módulo de preceptoria.
+3. **Respeito à Rota Pública Mobile:**  
+   O endereço `/p/:token` é acessado diariamente por médicos nos corredores dos hospitais. Essa tela deve carregar instantaneamente, sem exigir login no portal e sem renderizar a barra lateral nem o rodapé do ecossistema.
+4. **Mantenha os Dados de Convênios Atualizados:**  
+   O contrato Hapvida deve permanecer sincronizado conforme os dados do **Chamado 16.902.214** (37 vagas em Cirurgia, Pediatria e Urgência a R$ 3.300/aluno, total R$ 122.100/semestre na Unidade Baixa Verde).
+5. **Código Limpo e TypeScript Progressivo:**  
+   Novos componentes devem ser criados em TypeScript (`.tsx`). Ao refatorar componentes existentes do monólito de 7.6k linhas da preceptoria, extraia subcomponentes progressivamente para `src/modules/preceptoria/components/`.
 
 ---
 
-## 8. Design System
-
-Definido em [`src/index.css`](file:///d:/PROJETOS/ecossistema-de-medicina/src/index.css) via diretiva `@theme` do TailwindCSS v4.
-
-### Paleta de Cores
-
-| Token | Cor | Uso |
-|-------|-----|-----|
-| `--color-primary` | `#0f172a` (slate-900) | Sidebar, textos principais |
-| `--color-primary-container` | `#1e293b` (slate-800) | Hover na sidebar |
-| `--color-secondary` | `#2563eb` (blue-600) | Botões, links, destaques |
-| `--color-surface` | `#ffffff` | Fundo de cards |
-| `--color-surface-container-low` | `#f8fafc` (slate-50) | Fundo geral da página |
-| `--color-error` | `#f43f5e` (rose-500) | Erros e alertas |
-| `--color-outline-variant` | `#e2e8f0` (slate-200) | Bordas de cards |
-
-### Tipografia
-
-- **Fonte principal:** `Inter` (pesos 300–800)
-- **Fonte display:** `Outfit` (pesos 400–800)
-- Carregadas via Google Fonts
-
-### Variáveis de Espaçamento e Sombra
-
-```css
---spacing-sidebar-width: 256px;      /* Largura fixa da Sidebar */
---shadow-level-1 a level-4           /* Sombras progressivas para elevação */
-```
-
-### Scrollbar customizada
-
-Scrollbar discreta (6px de largura) com estilo minimalista slate.
-
----
-
-## 9. Componentes da UI
-
-### `Sidebar.tsx`
-
-- Sidebar fixa (256px) no lado esquerdo
-- Exibe logo da UNINASSAU (branca)
-- 4 módulos: Home, Gestão de Preceptoria, SimulaMed, Convênios
-- Clique no módulo navega diretamente para o dashboard do módulo
-- Sub-menus **desabilitados** na UI, mas preservados em código para ativação futura
-- Footer com botão de suporte e versão
-
-**Estrutura de dados da sidebar:**
-```typescript
-const MODULES: ModuleInfo[] = [
-  { id: 'home', label: 'Home', icon: Home, subPages: [...] },
-  { id: 'preceptores', label: 'Gestão de Preceptoria', icon: GraduationCap, subPages: [...] },
-  { id: 'simulamed', label: 'SimulaMed', icon: Sparkles, subPages: [...] },
-  { id: 'convenios', label: 'Convênios', icon: Handshake, subPages: [...] }
-];
-```
-
-### `Header.tsx`
-
-- Header fixo (64px altura) com `marginLeft: 256px` para compensar sidebar
-- **Esquerda:** Breadcrumb "Ecossistema de Medicina > Módulo > Sub-página"
-- **Direita:** Barra de busca global (>lg), perfil do usuário
-- Usuário exibido: Hesdras Viana · Diretor de Unidade · UNINASSAU Boa Viagem
-- Notificações mockadas (3 exemplos): Divergência de Saldo, Preceptor Credenciado, RPA Emitido
-
-### `HomeModule.tsx`
-
-- Hero section com gradiente azul-índigo
-- Grid 3 colunas com cards de módulos
-- Botões de acesso rápido para cada módulo
-- Seção de aviso sobre arquitetura de expansão
-
-### `EmDesenvolvimento.tsx`
-
-Componente reutilizável de placeholder para sub-módulos em desenvolvimento. Props:
-- `titulo`, `objetivo`, `escopo`
-- `recursosPrevistos: string[]`
-- `statusAtual`, `roadmap`, `arquitetura`
-- `proximasEtapas: string[]`
-
----
-
-## 10. Roadmap de Expansão
-
-### Módulos Planejados (ainda não no sistema)
-
-| Módulo | Descrição | Previsão |
-|--------|-----------|---------|
-| **Internato** | Gestão completa do internato médico (9º/10º) | Futuro |
-| **Docentes** | Gestão de professores teóricos (não preceptores) | Futuro |
-| **Relatórios Corporativos** | BI consolidado multi-unidade | Futuro |
-| **Portal do Aluno** | Acesso do aluno ao próprio histórico SimulaMed | Futuro |
-| **Portal do Preceptor** | Self-service para médicos (upload de docs, ver escalas) | Futuro |
-
-### Integrações Planejadas
-
-| Integração | Descrição | Previsão |
-|------------|-----------|---------|
-| **CFM** | Validação automática de CRM | Q3/2026 |
-| **Sispag** | Processamento de pagamentos bancários | Q4/2026 |
-| **OCR/NFS-e** | Leitura automática de Notas Fiscais | Q4/2026 |
-| **Prefeituras** | APIs de emissão de NFS-e | Q4/2026 |
-| **ERP Central** | Barramento de processos BPMS | Q1/2027 |
-| **Big Data / BI** | Pipeline analítico corporativo | Q2/2027 |
-
----
-
-## 11. Sub-módulos em Desenvolvimento
-
-Dentro do módulo **Gestão de Preceptoria**, as seguintes sub-páginas estão planejadas:
-
-### 📋 Cadastro & Lista (`lista`) — Q3/2026
-
-**Objetivo:** Gerenciar cadastro unificado de médicos preceptores.
-
-**Recursos planejados:**
-- Integração em tempo real com CFM/Portal de Convênios
-- Upload seguro de documentos (CRM, Diploma, Especializações)
-- Assinatura digital de termos de compromisso
-
-**Arquitetura:** Servidor de arquivos em nuvem com criptografia + banco relacional (LGPD compliant)
-
----
-
-### 📅 Escalas (`escalas`) — Q3/2026
-
-**Objetivo:** Organização e distribuição inteligente dos rodízios práticos.
-
-**Recursos planejados:**
-- Distribuição automatizada por disciplina e ala hospitalar
-- Alertas de conflitos de horário e sobrecarga
-- Assinatura digital via geolocalização e QR Code
-
-**Arquitetura:** Microsserviço dedicado de agendamento + motor de regras acadêmicas
-
----
-
-### 💰 Pagamentos (`pagamentos`) — Q4/2026
-
-**Objetivo:** Processamento de honorários para preceptores.
-
-**Recursos planejados:**
-- Cálculo automático por valor/hora × horas registradas
-- Dedução automática de impostos (conforme regime)
-- Histórico de lotes e comprovantes
-
-**Arquitetura:** APIs bancárias com criptografia e tokenização de transações
-
----
-
-### 🧾 NF / RPA (`nf_rpa`) — Q4/2026
-
-**Objetivo:** Recepção, auditoria e conciliação de Notas Fiscais e RPA.
-
-**Recursos planejados:**
-- OCR inteligente para leitura automatizada de NFS-e
-- Cálculo de retenções (ISS, INSS, IRRF, PIS/COFINS)
-- Painel de conciliação entre escala e documento fiscal
-
-**Arquitetura:** Engine de processamento de documentos com IA
-
----
-
-### ⚙️ Processos & Chamados (`processos`) — Q1/2027
-
-**Objetivo:** Gestão centralizada de solicitações administrativas e liberação orçamentária.
-
-**Recursos planejados:**
-- Controle automático de SLA
-- Fluxo de aprovação multinível de verbas (alçadas)
-- Notificações push e alertas por e-mail
-
-**Arquitetura:** Engine BPMS integrada ao ERP central
-
----
-
-### 📊 Controle de Saldos (`saldos`) — Q1/2027
-
-**Objetivo:** Monitoramento rígido de teto orçamentário por hospital/centro de custo.
-
-**Recursos planejados:**
-- Monitoramento gráfico em tempo real planejado vs. realizado
-- Travas automáticas ao atingir limites de segurança
-- Remanejamento flexível de saldos residuais
-
-**Arquitetura:** Módulo analítico + BI financeiro
-
----
-
-### 📈 Relatórios (`relatorios`) — Q2/2027
-
-**Objetivo:** Geração de insumos estratégicos para tomada de decisões.
-
-**Recursos planejados:**
-- Relatórios customizados com filtros multidimensionais
-- Visualizador gráfico interativo de custos
-- Exportação em PDF, XLSX, CSV
-
-**Arquitetura:** Pipeline de Big Data corporativo
-
----
-
-## 12. Configuração & Setup
-
-### Pré-requisitos
-
-- Node.js ≥ 18
-- npm ≥ 9
-
-### Instalação
-
-```bash
-# Clone o projeto
-cd d:\PROJETOS\ecossistema-de-medicina
-
-# Instalar dependências
-npm install
-
-# Iniciar servidor de desenvolvimento
-npm run dev
-# Acesse: http://localhost:3000
-```
-
-### Variáveis de Ambiente
-
-Copiar `.env.example` para `.env` e preencher:
-
-```env
-# Chave da API Google GenAI (para funcionalidades de IA futuras)
-GOOGLE_API_KEY=sua_chave_aqui
-
-# Configurações do servidor Express (futuro backend)
-PORT=3001
-```
-
-### Observações do Vite
-
-O arquivo `vite.config.ts` inclui suporte especial para ambientes AI Studio:
-
-```typescript
-hmr: process.env.DISABLE_HMR !== 'true',      // HMR desabilitado no AI Studio
-watch: process.env.DISABLE_HMR === 'true' ? null : {},  // Sem file watching no AI Studio
-```
-
----
-
-## 13. Convenções de Código
-
-### Nomenclatura
-
-| Tipo | Convenção | Exemplo |
-|------|-----------|---------|
-| Componentes | PascalCase | `PreceptoresModule` |
-| Arquivos de componente | PascalCase.tsx | `ConveniosModule.tsx` |
-| Hooks | camelCase com `use` | `useState`, `useMemo` |
-| Props interfaces | PascalCase + "Props" | `PreceptoresModuleProps` |
-| IDs de dados mock | Prefixo + número | `PR001`, `HP002`, `ESC001` |
-
-### Padrões de Componente
-
-- Todos os componentes usam **functional components** com TypeScript
-- Props tipadas com interfaces
-- Estado local com `useState` / computações com `useMemo`
-- Notificações de feedback: estado `notif: string | null` com `setTimeout` de 2500–3500ms
-- Classes CSS: TailwindCSS v4 com tokens personalizados do `@theme`
-
-### Convenções de Dados
-
-- Datas formatadas em `DD/MM/YYYY HH:MM` para históricos
-- Datas de input em `YYYY-MM-DD`
-- Valores monetários em `number` (float), formatados com `toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })`
-- IDs sempre em formato `PREFIXOnnn` (ex.: PR001, HP002, DS003)
-
-### Importações
-
-Ícones exclusivamente de `lucide-react`. Nenhuma outra biblioteca de ícones.
-
----
-
-## ⚠️ Pontos de Atenção para o Futuro
-
-> [!WARNING]
-> **Estado apenas em memória:** Todos os dados são `useState` em `App.tsx`. Qualquer atualização de página recarrega para os dados mockados. A implementação de persistência (API / banco de dados) é o próximo passo crítico.
-
-> [!IMPORTANT]
-> **Convênios urgentes:** Irmandade da Santa Casa (~3 meses), Hospital Santa Joana e Associação Evangélica Beneficente **vencem em 2026**. Renovação é prioridade institucional.
-
-> [!NOTE]
-> **Sub-menus da Sidebar desabilitados:** Os sub-menus do Sidebar estão comentados na UI mas preservados em código. Para reativá-los, editar o loop de renderização em `Sidebar.tsx` para incluir os sub-pages. A estrutura já está pronta.
-
-> [!TIP]
-> **Dados reais de SimulaMed:** O arquivo `simulamedData.ts` contém dados reais de alunos (nomes, telefones, notas). Para produção, esses dados devem ser carregados de API segura, não embutidos no bundle.
-
-> [!CAUTION]
-> **Sem autenticação:** O sistema não possui autenticação/autorização. Qualquer usuário com acesso à URL pode ver todos os dados. Implementar autenticação antes de qualquer deploy em ambiente não-controlado.
-
----
-
-## 📞 Contato e Suporte
-
-| Papel | Nome | Contato |
-|-------|------|---------|
-| Diretor de Unidade | Hesdras Viana | (via sistema interno) |
-| Suporte Técnico | Ser Educacional TI | contato@sereducacional.com |
-
----
-
-*Documentação gerada em Julho/2026 · Versão Executiva 2026 · UNINASSAU Boa Viagem*
+*Fim do Dossiê · UNINASSAU Medicina · Todos os direitos reservados.*
